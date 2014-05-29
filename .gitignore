@@ -3,5 +3,3 @@
 *.class 
 bin/
 gen/
-.classpath
-.settings/
