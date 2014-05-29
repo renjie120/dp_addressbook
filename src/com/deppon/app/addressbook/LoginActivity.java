@@ -1,9 +1,7 @@
 package com.deppon.app.addressbook;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import android.app.Activity;
@@ -16,7 +14,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,7 +31,7 @@ import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.deppon.app.addressbook.bean.LoginResult;
 import com.deppon.app.addressbook.bean.Result;
 import com.deppon.app.addressbook.util.Constant;
 import com.deppon.app.addressbook.util.HttpRequire;
@@ -45,36 +42,17 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
-import com.litesuits.http.request.param.HttpParam;
 
 public class LoginActivity extends Activity implements OnClickListener {
 	private static final String url = Constant.DPM_HOST
-			+ "/dpm/login_login.action?password=qqqqqq&userId=130126&token=2c249ddb88288c5cbb5ba7729a249ad5";
+			+ "/dpm/login_login.action";
 	// 反馈邮件地址
 	public static String EMALADDRESS = "dpmobile@deppon.com";
 	public static String EXIT_ACTION = "exitAction";
-	// 登陆请求地址
-	public static String LOGINURL = "http://app.deppon.com/center/checkLogin";
-	// 文件解密地址
-	public static String FILEURL = "http://app.deppon.com/center/decryptFile";
-	// 登陆超时时间30秒
+	 // 登陆超时时间30秒
 	public static final int TIMEOUT = 30;
-
-	// false：正式环境.
-	public static final boolean ISDEBUG = true;
-	static {
-		// 如果是调试
-		if (ISDEBUG) {
-			// 反馈地址
-			EMALADDRESS = "lishuiqing110@163.com";
-			// LOGINURL = "http://10.224.70.10:8081/center/checkLogin";
-			// FILEURL = "http://10.224.70.10:8081/center/decryptFile";
-			// 登陆地址
-			LOGINURL = "http://10.224.70.132:8081/dpm/dpm/";
-			// 文件解密地址
-			FILEURL = "http://192.168.67.47/center/decryptFile";
-		}
-	}
+ 
+	 
 
 	// 密码
 	private EditText inputPass;
@@ -169,11 +147,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		// 选择了记住密码
 		if ("true".equals(remeber)) {
 			remeberPassword.setChecked(true);
-		}
-		if (ISDEBUG) {
-			// alert("使用的是测试版本！！");
-		}
-
+		} 
 		// 注册事件
 		// zhuceLogin.setOnClickListener(this);
 		// 登陆事件
@@ -279,6 +253,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 			String tk = HttpRequire.getMD5(HttpRequire.getBase64(uid));
 			p.addBodyParameter("token", tk); 
 			http.configResponseTextCharset("GBK");
+			System.out.println("进行登陆："+url+",uid="+uid+",pass="+pass);
 			http.send(HttpRequest.HttpMethod.POST, url, p,
 					new RequestCallBack<String>() {
 						@Override
@@ -295,14 +270,15 @@ public class LoginActivity extends Activity implements OnClickListener {
 						@Override
 						public void onSuccess(ResponseInfo<String> responseInfo) {
 							removeDialog(DIALOG_KEY);
-							System.out.println(responseInfo.result);
+							System.out.println("返回结果是："+responseInfo.result);
 							Result r = (Result) JSON.parseObject(
 									responseInfo.result, Result.class);
 							if (r.getErrorCode() == 0) {
 								String _res = r.getData().toString();
-								JSONObject obj = JSON.parseObject(_res);
+//								JSONObject obj = JSON.parseObject(_res);
+								LoginResult result = (LoginResult)JSON.parseObject(_res,LoginResult.class);
 								Intent intent2 = new Intent(LoginActivity.this,
-										NewHomeActivity.class);
+										HomePageActivity.class);
 								 
 								startActivity(intent2);
 							} else {
@@ -318,45 +294,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-	}
-
-//	/**
-//	 * 登陆请求服务器数据
-//	 * 
-//	 * @param userName
-//	 * @param password
-//	 */
-//	public void login(final String userName, final String password) {
-//		// 得到url请求.
-//		DefaultHttpClient httpclient = new DefaultHttpClient();
-//		try {
-//			ServerResult result = HttpRequire.login(userName, password);
-//			if (result == null || 1 != result.getErrorCode()) {
-//				myHandler.sendEmptyMessage(1);
-//			}
-//			// 成功了就跳转到活动列表页面.
-//			else {
-//				Message mes = new Message();
-//				mes.obj = result.getData();
-//				mes.what = 7;
-//				myHandler.sendMessage(mes);
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			myHandler.sendEmptyMessage(6);
-//		}
-//	}
- 
-	class LoginArg implements HttpParam {
-		private String userId;
-		private String password;
-
-		public LoginArg(String userId, String pass) {
-			this.userId = userId;
-			this.password = pass;
-		}
-	}
-
+	} 
+  
 	public void onClick(View v) {
 		if (v.getId() == R.id.buttonLogin) {
 			if ("".equals(inputUser.getText().toString().trim())) {
@@ -368,34 +307,12 @@ public class LoginActivity extends Activity implements OnClickListener {
 			} else {
 				go(null);
 			}
-		} /*
-		 * else if (v.getId() == R.id.registLogin) { regist(); }
-		 */
+		}  
 	}
 
 	public Handler myHandler = new Handler() {
 		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case 1:
-				alert("对不起，该用户没有权限");
-				removeDialog(DIALOG_KEY);
-				buttonLogin.setEnabled(true);
-				break;
-			case 2:
-				alert("对不起，手机序列号不匹配");
-				removeDialog(DIALOG_KEY);
-				buttonLogin.setEnabled(true);
-				break;
-			case 3:
-				alert("对不起，密码错误");
-				removeDialog(DIALOG_KEY);
-				buttonLogin.setEnabled(true);
-				break;
-			case 4:
-				alert("对不起，参数错误");
-				removeDialog(DIALOG_KEY);
-				buttonLogin.setEnabled(true);
-				break;
+			switch (msg.what) { 
 			case 5:
 				alert("没有安装相关软件，请安装软件后重试");
 				removeDialog(DIALOG_KEY);
@@ -405,20 +322,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 				alert("对不起，服务端异常或者网络异常，请稍候重试");
 				removeDialog(DIALOG_KEY);
 				buttonLogin.setEnabled(true);
-				break;
-			case 7:
-				// JSONObject m = (JSONObject) msg.obj;
-				Map m = (HashMap) msg.obj;
-				Intent intent = new Intent(LoginActivity.this,
-						HomePageActivity.class);
-				String userName = m.get("name") + "";
-				intent.putExtra("name", userName);
-				intent.putExtra("pass", m.get("pass") + "");
-				removeDialog(DIALOG_KEY);
-				buttonLogin.setEnabled(true);
-				saveJpush(userName, "dpm");
-				startActivity(intent);
-				break;
+				break; 
 			default:
 				super.hasMessages(msg.what);
 				break;
@@ -515,22 +419,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 		new AlertDialog.Builder(LoginActivity.this).setTitle("提示")
 				.setMessage(mess).setPositiveButton("确定", null).show();
 	}
-
-	/**
-	 * 处理结果.
-	 * 
-	 * @param result
-	 */
-	public void console(String result) {
-		if ("40002".equals(result)) {
-			myHandler.sendEmptyMessage(1);
-		} else if ("40003".equals(result)) {
-			myHandler.sendEmptyMessage(2);
-		} else if ("40004".equals(result)) {
-			myHandler.sendEmptyMessage(3);
-		} else if ("40005".equals(result)) {
-			myHandler.sendEmptyMessage(4);
-		}
-	}
+ 
 
 }
