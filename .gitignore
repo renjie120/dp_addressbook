@@ -1,0 +1,7 @@
+.myeclipse/
+*.bak
+*.class 
+bin/
+gen/
+.classpath
+.settings/

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_marginLeft="3dp"
+    android:background="@color/white"
+    android:orientation="vertical" >
+
+    <com.deppon.app.addressbook.util.ActionBar
+        android:id="@+id/query_head"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:cacheColorHint="#00000000"
+        android:orientation="horizontal"
+        android:padding="4dip" >
+
+        <TextView
+            android:id="@+id/text_notuse2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/searchText_btn"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape"
+                android:orientation="horizontal"
+                android:padding="1dip" >
+
+                <ImageView style="@style/search_img" />
+
+                <EditText
+                    android:id="@+id/searchText"
+                    style="@style/search_edit"
+                    android:background="@drawable/search_editext_border" >
+                </EditText>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/searchBtn"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:background="@color/orange"
+                android:gravity="center"
+                android:text="@string/search"
+                android:textColor="@color/white"
+                android:textSize="@dimen/tick_search_btn" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/cancelBtn"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="2dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:onClick="cancel"
+            android:text="@string/cancel"
+            android:textColor="@color/black"
+            android:textSize="@dimen/tick_search_btn" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/searchEmp"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            android:background="@drawable/img_25"
+            android:text="人员"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/searchOrg"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10px" 
+            android:background="@drawable/img_24"
+            android:onClick="cancel"
+            android:text="组织 "
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="查询结果"
+        android:textColor="@color/black" />
+
+    <ListView
+        android:id="@+id/ListView"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:cacheColorHint="#00000000"
+        android:dividerHeight="1dip"
+        android:drawSelectorOnTop="false"
+        android:fadingEdgeLength="0.0sp"
+        android:scrollbars="none" />
+
+</LinearLayout>
