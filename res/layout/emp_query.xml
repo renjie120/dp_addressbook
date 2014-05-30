@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_marginLeft="3dp"
     android:background="@color/white"
     android:orientation="vertical" >
 
@@ -96,7 +95,7 @@
             android:id="@+id/searchOrg"
             android:layout_width="40dp"
             android:layout_height="30dp"
-            android:layout_marginLeft="10px" 
+            android:layout_marginLeft="10px"
             android:background="@drawable/img_24"
             android:onClick="cancel"
             android:text="组织 "

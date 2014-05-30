@@ -36,7 +36,7 @@ import com.deppon.app.addressbook.util.ActionBar.AbstractAction;
 public class EmpQueryActivity extends BaseActivity {
 	private EditText searchText;
 	private TextView searchBtn;
-	private Button searchEmp, searchOrg,cancelBtn;
+	private Button searchEmp, searchOrg, cancelBtn;
 	private ListView list;
 	private boolean isSearchEmp = true;
 	private ServerResults results;
@@ -45,7 +45,8 @@ public class EmpQueryActivity extends BaseActivity {
 	private ServerResult result;
 	private OrgListAdapter orgAdapter;
 	private ActionBar head;
-	
+	private String loginUser, token;
+
 	/**
 	 * 对页面的元素进行处理的回调类.
 	 */
@@ -119,27 +120,24 @@ public class EmpQueryActivity extends BaseActivity {
 	};
 
 	private void search(String content) {
-		if (Constant.debug) {
-			myHandler.sendEmptyMessage(9);
-		} else {
-			try {
-				results = HttpRequire.search(isSearchEmp, content, startIndex);
-				// 如果返回数据不是1，就说明出现异常.
-				if (results.getErrorCode() < 0) {
-					myHandler.sendEmptyMessage(1);
-				}
-				// 否则就进行文件解析处理.
-				else {
-					if (isSearchEmp)
-						// 显示人员
-						myHandler.sendEmptyMessage(3);
-					else
-						// 显示组织
-						myHandler.sendEmptyMessage(2);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+		try {
+			results = HttpRequire.search(isSearchEmp, content, startIndex,
+					loginUser, token);
+			// 如果返回数据不是1，就说明出现异常.
+			if (results.getErrorCode() < 0) {
+				myHandler.sendEmptyMessage(1);
 			}
+			// 否则就进行文件解析处理.
+			else {
+				if (isSearchEmp)
+					// 显示人员
+					myHandler.sendEmptyMessage(3);
+				else
+					// 显示组织
+					myHandler.sendEmptyMessage(2);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -155,7 +153,10 @@ public class EmpQueryActivity extends BaseActivity {
 		searchBtn = (TextView) findViewById(R.id.searchBtn);
 		cancelBtn = (Button) findViewById(R.id.cancelBtn);
 		list = (ListView) findViewById(R.id.ListView);
-		
+		// 去掉分割线。。
+		list.setDivider(null);
+		loginUser = getIntent().getStringExtra("loginUser");
+		token = getIntent().getStringExtra("token");
 		head = (ActionBar) findViewById(R.id.query_head);
 		head.init(R.string.search, true, false, 50);
 		head.setLeftAction(new AbstractAction(R.drawable.logo) {
@@ -164,14 +165,14 @@ public class EmpQueryActivity extends BaseActivity {
 
 			}
 		});
-		
-		cancelBtn.setOnClickListener(new OnClickListener(){
+
+		cancelBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				searchText.setText("");
 			}
-			
+
 		});
 		searchOrg.setOnClickListener(new OnClickListener() {
 			@Override
@@ -208,7 +209,7 @@ public class EmpQueryActivity extends BaseActivity {
 					long arg3) {
 				// 如果不是最后一个级别的列表，就进行下一级的显示.
 				if (!isSearchEmp) {
-					 alert("没有开发.");
+					alert("没有开发.");
 				} else {
 					String id = "" + arg1.findViewById(R.id.empName).getTag();
 					goEmpDetail(id);
@@ -226,7 +227,7 @@ public class EmpQueryActivity extends BaseActivity {
 			myHandler.sendEmptyMessage(9);
 		} else {
 			try {
-				result = HttpRequire.getEmpDetail(r);
+				result = HttpRequire.getEmpDetail(r, loginUser, token);
 				// 如果返回数据不是1，就说明出现异常.
 				if (result.getErrorCode() < 0) {
 					myHandler.sendEmptyMessage(1);

@@ -3,16 +3,21 @@ package com.deppon.app.addressbook;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.deppon.app.addressbook.util.ActionBar;
 import com.deppon.app.addressbook.util.ActionBar.AbstractAction;
+import com.deppon.app.addressbook.util.Constant;
 
 /**
  * 首页.
@@ -28,6 +33,7 @@ public class NewHomeActivity extends BaseActivity {
 	int[] allitem = { R.string.img1_title, R.string.img2_title,
 			R.string.img3_title, R.string.img4_title, R.string.img5_title,
 			R.string.img6_title };
+	private String loginUser, token;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,9 @@ public class NewHomeActivity extends BaseActivity {
 
 			}
 		});
+		token = getIntent().getStringExtra("token");
+		loginUser = getIntent().getStringExtra("loginUser");
+
 		ArrayList<HashMap<String, Object>> meumList = new ArrayList<HashMap<String, Object>>();
 		for (int i = 0; i < allitem.length; i++) {
 			HashMap<String, Object> map = new HashMap<String, Object>();
@@ -63,5 +72,64 @@ public class NewHomeActivity extends BaseActivity {
 		// 添加Item到网格中
 		gridview.setAdapter(saItem);
 		gridview.setSelector(new ColorDrawable(Color.TRANSPARENT));
+		// 添加点击事件
+		gridview.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				Intent openUrl = new Intent();
+				Intent intent2 = null;
+				switch (arg2) {
+				// 新闻动态
+				case 0:
+					intent2 = new Intent(NewHomeActivity.this,
+							WebviewActivity.class);
+					intent2.putExtra("url", Constant.DPM_HOST
+							+ "/jsp/ios/rollnews/rollnews_list.jsp");
+					startActivity(intent2);
+					break;
+				// 待办事项
+				case 1:
+					intent2 = new Intent(NewHomeActivity.this,
+							WebviewActivity.class);
+					intent2.putExtra("url", Constant.DPM_HOST
+							+ "/toWorkItemsList");
+					startActivity(intent2);
+					break;
+				// 公告
+				case 2:
+					intent2 = new Intent(NewHomeActivity.this,
+							WebviewActivity.class);
+					intent2.putExtra("url", Constant.DPM_HOST
+							+ "/jsp/ios/notice/appoint_rmoval_announcement.jsp");
+					startActivity(intent2);
+					break;
+				// 通讯录
+				case 3:
+					intent2 = new Intent(NewHomeActivity.this,
+							AddressListActivity.class);
+					intent2.putExtra("token", token);
+					intent2.putExtra("loginUser", loginUser);
+					startActivity(intent2);
+					break;
+				// BI
+				case 4:
+					Toast.makeText(getApplicationContext(), "开发中，敬请期待...",
+							Toast.LENGTH_SHORT).show();
+					break;
+				// 邮件
+				case 5:
+					Toast.makeText(getApplicationContext(), "开发中，敬请期待...",
+							Toast.LENGTH_SHORT).show();
+					break;
+				// 更多
+				case 6:
+					Toast.makeText(getApplicationContext(), "开发中，敬请期待...",
+							Toast.LENGTH_SHORT).show();
+					break;
+				default:
+					break;
+				}
+			}
+		});
 	}
 }

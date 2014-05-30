@@ -6,7 +6,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -18,10 +17,10 @@ import com.deppon.app.addressbook.bean.ServerResult;
 import com.deppon.app.addressbook.bean.ServerResults;
 
 public class HttpRequire {
-	public static ServerResult getOrgByChildern(int root) throws Exception {
+	public static ServerResult getOrgByChildern(int root,String loginUser,String tk) throws Exception { 
 		return request(Constant.DPM_HOST
-				+ "/tongxunlu_getChildByOrg.action?id=" + root
-				+ "&userId=130126&token=2c249ddb88288c5cbb5ba7729a249ad5", null);
+				+ "/dpm/tongxunlu_getChildByOrg.action?id=" + root
+				+ "&userId="+loginUser+"&token="+tk, null);
 	}
 
 	public static String getBase64(String val) throws NoSuchAlgorithmException {
@@ -40,13 +39,13 @@ public class HttpRequire {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ServerResults search(boolean isEmp, String content, int start)
-			throws Exception {
+	public static ServerResults search(boolean isEmp, String content, int start,String loginUser,String tk)
+			throws Exception { 
 		return requestArr(
 				Constant.DPM_HOST
-						+ "/tongxunlu_search.action?searchName="
+						+ "/dpm/tongxunlu_search.action?searchName="
 						+ content
-						+ "&userId=130126&token=2c249ddb88288c5cbb5ba7729a249ad5&searchType="
+						+ "&userId="+loginUser+"&token="+tk+"&searchType="
 						+ (isEmp ? "1" : "2") + "&start=" + start
 						+ "&pageSize=50", null);
 	}
@@ -59,10 +58,10 @@ public class HttpRequire {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String regiestJpush(String businoId) throws Exception {
+	public static String regiestJpush(String businoId,String loginUser,String tk) throws Exception { 
 		JpushTokenResult result = requestToken(
 				Constant.DPM_HOST
-						+ "/jpush_setTagAndAlias.action?userId=130126&token=2c249ddb88288c5cbb5ba7729a249ad5"
+						+ "/dpm/jpush_setTagAndAlias.action?userId="+loginUser+"&token="+tk
 						+ "&SysCode=dpm&deviceType=android&businoId="
 						+ businoId, null);
 		if (result.getErrorCode() >= 0) {
@@ -78,10 +77,10 @@ public class HttpRequire {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ServerResult getEmpDetail(String empID) throws Exception {
+	public static ServerResult getEmpDetail(String empID,String loginUser,String tk) throws Exception { 
 		return request(Constant.DPM_HOST + "/tongxunlu_getEmpDetail.action?id="
 				+ empID
-				+ "&userId=130126&token=2c249ddb88288c5cbb5ba7729a249ad5", null);
+				+ "&userId="+loginUser+"&token="+tk, null);
 	}
 
 	private static JpushTokenResult requestToken(String url, String auth)
@@ -102,6 +101,30 @@ public class HttpRequire {
 			// 如果没有登录成功，就弹出提示信息.
 			JpushTokenResult result = (JpushTokenResult) JSON.parseObject(str,
 					JpushTokenResult.class);
+			return result;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			// 关闭连接.
+			httpclient.getConnectionManager().shutdown();
+		}
+	}
+	private static ServerResults requestArr(String url, String auth)
+			throws Exception {
+		System.out.println("请求的url" + url);
+		// 得到url请求.
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try {
+			HttpPost httpost = new HttpPost(url);
+			if (auth != null)
+				httpost.addHeader("auth", auth);
+			HttpResponse response = httpclient.execute(httpost);
+			HttpEntity entity = response.getEntity();
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					entity.getContent(), "GBK"));
+			// 如果没有登录成功，就弹出提示信息.
+			ServerResults result = (ServerResults) JSON.parseObject(
+					br.readLine(), ServerResults.class);
 			return result;
 		} catch (Exception e) {
 			throw e;
@@ -137,50 +160,7 @@ public class HttpRequire {
 			httpclient.getConnectionManager().shutdown();
 		}
 	}
-
-	private static ServerResults requestArr(String url, String auth)
-			throws Exception {
-		System.out.println("请求的url" + url);
-		// 得到url请求.
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try {
-			HttpPost httpost = new HttpPost(url);
-			if (auth != null)
-				httpost.addHeader("auth", auth);
-			HttpResponse response = httpclient.execute(httpost);
-			HttpEntity entity = response.getEntity();
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					entity.getContent(), "GBK"));
-			// 如果没有登录成功，就弹出提示信息.
-			ServerResults result = (ServerResults) JSON.parseObject(
-					br.readLine(), ServerResults.class);
-			return result;
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			// 关闭连接.
-			httpclient.getConnectionManager().shutdown();
-		}
-	}
-
-	/**
-	 * 登陆
-	 * 
-	 * @param userName
-	 *            用户名
-	 * @param password
-	 *            密码
-	 * @return
-	 * @throws Exception
-	 */
-	public static ServerResult login(String userName, String password)
-			throws Exception {
-		String url = Constant.DPM_HOST + "/dpm/login_login.action?password="
-				+ password + "&userId=" + userName + "&token="
-				+ getMD5(encryptBASE64(userName));
-		System.out.println("登陆地址：" + url);
-		return request(url, null);
-	}
+  
 
 	public static String encryptBASE64(String key) throws Exception {
 		// String base64String = "whuang123";

@@ -1,5 +1,7 @@
 package com.deppon.app.addressbook;
 
+import com.deppon.app.addressbook.util.Constant;
+
 import android.app.TabActivity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -27,8 +29,7 @@ public class HomePageActivity extends TabActivity {
 	private static final String Tab2 = "Tab2";
 	private static final String Tab3 = "Tab3";
 	private static final String Tab4 = "Tab4";
-	private String token, auth;
-	private String eventId;
+	private String token, loginUser;
 	private float screenHeight = 0;
 	private float screenWidth = 0;
 	public static float barH = 0.1f;
@@ -64,9 +65,8 @@ public class HomePageActivity extends TabActivity {
 		setContentView(R.layout.main);
 		JPushInterface.init(getApplicationContext());
 		Intent intent = getIntent();
-		eventId = intent.getStringExtra("eventid");
 		token = intent.getStringExtra("token");
-		auth = intent.getStringExtra("auth");
+		loginUser = intent.getStringExtra("loginUser");
 
 		float[] screen2 = getScreen2();
 		screenHeight = screen2[1];
@@ -79,16 +79,16 @@ public class HomePageActivity extends TabActivity {
 		TabHost.TabSpec tabSpec = tabHost.newTabSpec(Tab1);
 		tabSpec.setIndicator(composeLayout("首页", R.drawable.icon1));
 		tabSpec.setContent(new Intent(HomePageActivity.this,
-				NewHomeActivity.class).putExtra("token", token)
-				.putExtra("eventid", eventId).putExtra("auth", auth));
+				NewHomeActivity.class).putExtra("token", token).putExtra(
+				"loginUser", loginUser));
 		tabHost.addTab(tabSpec);
 
 		// 设置第二个tab页的对应的intent布局
 		TabHost.TabSpec tabSpec2 = tabHost.newTabSpec(Tab2);
 		tabSpec2.setIndicator(composeLayout("搜索", R.drawable.icon2));
 		tabSpec2.setContent(new Intent(HomePageActivity.this,
-				EmpQueryActivity.class).putExtra("token", token)
-				.putExtra("auth", auth).putExtra("eventid", eventId));
+				EmpQueryActivity.class).putExtra("token", token).putExtra(
+				"loginUser", loginUser));
 		tabHost.addTab(tabSpec2);
 
 		// 设置第三个tab页的对应的intent布局
@@ -97,18 +97,17 @@ public class HomePageActivity extends TabActivity {
 		tabSpec3.setContent(new Intent(HomePageActivity.this,
 				WebviewActivity.class)
 				.putExtra("token", token)
+				.putExtra("loginUser", loginUser)
 				.putExtra(
 						"url",
-						"http://10.224.70.116:8082/DPMontal/logincheck?CASTGC=TGT-2326-ZKWbQlcPgbQDGNkKJEA3Bucu7lhZvpCYGu6v9ZxMLDqcaCX6Fd&userid=130126&sessionId=D9E644A5C9A9AB6D996681970111D771")
-				.putExtra("auth", auth).putExtra("eventid", eventId));
+						Constant.DPM_HOST+"/jsp/ios/rollnews/rollnews_list.jsp"));
 		tabHost.addTab(tabSpec3);
 
 		// 设置第四个tab页的对应的intent布局
 		TabHost.TabSpec tabSpec4 = tabHost.newTabSpec(Tab3);
 		tabSpec4.setIndicator(composeLayout("关于", R.drawable.icon3));
 		tabSpec4.setContent(new Intent(HomePageActivity.this,
-				AddressListActivity.class).putExtra("token", token)
-				.putExtra("auth", auth).putExtra("eventid", eventId));
+				AboutActivity.class).putExtra("token", token) );
 		tabHost.addTab(tabSpec4);
 
 		// 这是对Tab标签本身的设置
@@ -118,14 +117,7 @@ public class HomePageActivity extends TabActivity {
 			tabWidget.getChildAt(i).getLayoutParams().height = height;
 			View v = tabWidget.getChildAt(i);
 			v.setBackgroundColor(getResources().getColor(
-					R.color.homepage_bottom));
-			// v.if (tabHost.getCurrentTab() == i) {
-			// // v.setBackgroundColor(Color.GRAY);
-			// } else {
-			// v.setBackgroundDrawable(getResources().getDrawable(
-			// R.drawable.bottom_background));
-			// }
-			//
+					R.color.homepage_bottom)); 
 		}
 
 		// 设置Tab变换时的监听事件

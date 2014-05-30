@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -44,7 +45,7 @@ import com.deppon.app.addressbook.util.HttpRequire;
  */
 public class AddressListActivity extends BaseActivity {
 	private ListView list;
-	private String token, auth;
+	private String token, loginUser;
 	private HorizontalListView list2;
 	private static final int DIALOG_KEY = 0;
 	private ProgressDialog dialog;
@@ -130,7 +131,7 @@ public class AddressListActivity extends BaseActivity {
 		list2 = (HorizontalListView) findViewById(R.id.list2);
 		Intent intent = getIntent();
 		token = intent.getStringExtra("token");
-		auth = intent.getStringExtra("auth");
+		loginUser = intent.getStringExtra("loginUser");
 		// 查询全部的订到的票的信息.
 		// 实例化底部布局
 		moreView = getLayoutInflater().inflate(R.drawable.moredata, null);
@@ -208,7 +209,7 @@ public class AddressListActivity extends BaseActivity {
 			myHandler.sendEmptyMessage(9);
 		} else {
 			try {
-				result = HttpRequire.getEmpDetail(r);
+				result = HttpRequire.getEmpDetail(r,loginUser,token);
 				// 如果返回数据不是1，就说明出现异常.
 				if (result.getErrorCode() < 0) {
 					myHandler.sendEmptyMessage(1);
@@ -391,7 +392,7 @@ public class AddressListActivity extends BaseActivity {
 			myHandler.sendEmptyMessage(9);
 		} else {
 			try {
-				result = HttpRequire.getOrgByChildern(r);
+				result = HttpRequire.getOrgByChildern(r,loginUser,token);
 				// 如果返回数据不是1，就说明出现异常.
 				if (result.getErrorCode() < 0) {
 					myHandler.sendEmptyMessage(1);
@@ -415,11 +416,14 @@ public class AddressListActivity extends BaseActivity {
 
 	public final static class EmpViewHolder {
 		public TextView empName;
+		public ImageView people;
 	}
 
 	public final static class EmpViewHolder2 {
 		public TextView jobname;
 		public TextView empName;
 		public TextView empPhone;
+		public ImageView call;
+		public ImageView shortmessage;
 	}
 }

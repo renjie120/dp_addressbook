@@ -18,15 +18,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.telephony.TelephonyManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
 
@@ -37,32 +38,44 @@ import com.deppon.app.addressbook.util.Constant;
 import com.deppon.app.addressbook.util.HttpRequire;
 import com.example.jpushdemo.ExampleUtil;
 import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.lidroid.xutils.view.annotation.ViewInject;
+import com.lidroid.xutils.view.annotation.event.OnClick;
 
-public class LoginActivity extends Activity implements OnClickListener {
+public class LoginActivity extends Activity {
 	private static final String url = Constant.DPM_HOST
-			+ "/dpm/login_login.action";
-	// 反馈邮件地址
-	public static String EMALADDRESS = "dpmobile@deppon.com";
-	public static String EXIT_ACTION = "exitAction";
-	 // 登陆超时时间30秒
+			+ "/dpm/login_login.action";  
+	// 登陆超时时间30秒
 	public static final int TIMEOUT = 30;
- 
-	 
 
 	// 密码
+	@ViewInject(R.id.inputPass)
 	private EditText inputPass;
+
+	@ViewInject(R.id.del_user)
+	private ImageView del_user;
+
+	@ViewInject(R.id.del_pass)
+	private ImageView del_pass;
+
 	// 用户名
+	@ViewInject(R.id.inputName)
 	private EditText inputUser;
+
 	// 登陆地址
+	@ViewInject(R.id.buttonLogin)
 	private Button buttonLogin;
+
 	String deviceId = null;
 	// 记住密码
+	@ViewInject(R.id.remember_password)
 	private CheckBox remeberPassword;
+
 	// 用户名
 	private String name;
 	// 密码
@@ -71,6 +84,69 @@ public class LoginActivity extends Activity implements OnClickListener {
 	private static final int DIALOG_KEY = 0;
 	// 精度条
 	private ProgressDialog dialog;
+	/**
+	 * 搜索文本框变化内容之后自动搜索.
+	 */
+	private TextWatcher searchWatcher = new TextWatcher() {
+
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+		}
+
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+		}
+
+		public void afterTextChanged(Editable s) {
+			if ("".equals(s.toString())) {
+				del_pass.setVisibility(View.GONE);
+			} else {
+				del_pass.setVisibility(View.VISIBLE);
+			}
+		}
+	};
+
+	@OnClick({ R.id.buttonLogin })
+	public void loginButton(View v) {
+		if ("".equals(inputUser.getText().toString().trim())) {
+			alert("请输入账号");
+			resetPage();
+		} else if ("".equals(inputPass.getText().toString().trim())) {
+			alert("请输入密码");
+			resetPage();
+		} else {
+			go(null);
+		}
+	}
+
+	@OnClick({ R.id.del_pass })
+	public void cleanPass(View v) {
+		inputPass.setText("");
+	}
+
+	@OnClick({ R.id.del_user })
+	public void cleanUser(View v) {
+		inputUser.setText("");
+	}
+
+	private TextWatcher searchWatcher2 = new TextWatcher() {
+
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+		}
+
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+		}
+
+		public void afterTextChanged(Editable s) {
+			if ("".equals(s.toString())) {
+				del_user.setVisibility(View.GONE);
+			} else {
+				del_user.setVisibility(View.VISIBLE);
+			}
+		}
+	};
 
 	/**
 	 * 判断网络是否好用.
@@ -121,11 +197,9 @@ public class LoginActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.login);
+
+		ViewUtils.inject(this);
 		JPushInterface.init(getApplicationContext());
-		// 用户密码
-		inputPass = (EditText) findViewById(R.id.inputPass);
-		// 用户名
-		inputUser = (EditText) findViewById(R.id.inputName);
 		// 手机临时存储变量
 		mSharedPreferences = PreferenceManager
 				.getDefaultSharedPreferences(this);
@@ -136,22 +210,17 @@ public class LoginActivity extends Activity implements OnClickListener {
 		if (in != null && in.getData() != null) {
 			openFile = in.getData();
 		}
-		// 是否记住密码
-		remeberPassword = (CheckBox) findViewById(R.id.remember_password);
 		// 得到本地存储的变量
 		String remeber = mSharedPreferences.getString("remeber", "false");
 		String pass = mSharedPreferences.getString("pass", "");
 		String user = mSharedPreferences.getString("userId", "");
-		buttonLogin = (Button) findViewById(R.id.buttonLogin);
 		// zhuceLogin = (Button) findViewById(R.id.registLogin);
 		// 选择了记住密码
 		if ("true".equals(remeber)) {
 			remeberPassword.setChecked(true);
-		} 
+		}
 		// 注册事件
 		// zhuceLogin.setOnClickListener(this);
-		// 登陆事件
-		buttonLogin.setOnClickListener(this);
 		// 点击记住密码的按钮操作
 		remeberPassword
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -188,6 +257,12 @@ public class LoginActivity extends Activity implements OnClickListener {
 			inputPass.setText(pass);
 			remeberPassword.setChecked(true);
 			inputUser.setText(user);
+			if (!"".equals(pass)) {
+				del_pass.setVisibility(View.VISIBLE);
+			}
+			if (!"".equals(user)) {
+				del_user.setVisibility(View.VISIBLE);
+			}
 			// 如果不是点击的返回按钮回退的，并且有文件，就直接登录.
 			if (!"true".equals(isBack)) {
 				if (in != null && in.getData() != null) {
@@ -197,6 +272,10 @@ public class LoginActivity extends Activity implements OnClickListener {
 				}
 			}
 		}
+
+		inputPass.addTextChangedListener(searchWatcher);
+		inputUser.addTextChangedListener(searchWatcher2);
+
 	}
 
 	/**
@@ -234,26 +313,24 @@ public class LoginActivity extends Activity implements OnClickListener {
 		if (!isNetworkConnected(this)) {
 			alert("网络异常，请确认联网后重试");
 		} else {
-			TelephonyManager tm = (TelephonyManager) this
-					.getSystemService(Context.TELEPHONY_SERVICE);
 			savePass();
 			name = inputUser.getText().toString();
 			// 密码
 			pass = inputPass.getText().toString();
-			login(name,pass);
+			login(name, pass);
 		}
 	}
 
-	private void login(String uid, String pass) {
+	private void login(final String uid, String pass) {
 		try {
 			HttpUtils http = new HttpUtils();
 			RequestParams p = new RequestParams();
 			p.addBodyParameter("userId", uid);
 			p.addBodyParameter("password", pass);
-			String tk = HttpRequire.getMD5(HttpRequire.getBase64(uid));
-			p.addBodyParameter("token", tk); 
+			final String tk = HttpRequire.getMD5(HttpRequire.getBase64(uid));
+			p.addBodyParameter("token", tk);
 			http.configResponseTextCharset("GBK");
-			System.out.println("进行登陆："+url+",uid="+uid+",pass="+pass);
+			System.out.println("进行登陆：" + url + ",uid=" + uid + ",pass=" + pass);
 			http.send(HttpRequest.HttpMethod.POST, url, p,
 					new RequestCallBack<String>() {
 						@Override
@@ -270,16 +347,18 @@ public class LoginActivity extends Activity implements OnClickListener {
 						@Override
 						public void onSuccess(ResponseInfo<String> responseInfo) {
 							removeDialog(DIALOG_KEY);
-							System.out.println("返回结果是："+responseInfo.result);
+							System.out.println("返回结果是：" + responseInfo.result);
 							Result r = (Result) JSON.parseObject(
 									responseInfo.result, Result.class);
 							if (r.getErrorCode() == 0) {
 								String _res = r.getData().toString();
-//								JSONObject obj = JSON.parseObject(_res);
-								LoginResult result = (LoginResult)JSON.parseObject(_res,LoginResult.class);
+								LoginResult result = (LoginResult) JSON
+										.parseObject(_res, LoginResult.class);
 								Intent intent2 = new Intent(LoginActivity.this,
 										HomePageActivity.class);
-								 
+								intent2.putExtra("loginUser", uid);
+								intent2.putExtra("token", tk);
+								saveJpush(uid, "dpm");
 								startActivity(intent2);
 							} else {
 								alert(r.getErrorMessage());
@@ -294,25 +373,11 @@ public class LoginActivity extends Activity implements OnClickListener {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-	} 
-  
-	public void onClick(View v) {
-		if (v.getId() == R.id.buttonLogin) {
-			if ("".equals(inputUser.getText().toString().trim())) {
-				alert("请输入账号");
-				resetPage();
-			} else if ("".equals(inputPass.getText().toString().trim())) {
-				alert("请输入密码");
-				resetPage();
-			} else {
-				go(null);
-			}
-		}  
 	}
 
 	public Handler myHandler = new Handler() {
 		public void handleMessage(Message msg) {
-			switch (msg.what) { 
+			switch (msg.what) {
 			case 5:
 				alert("没有安装相关软件，请安装软件后重试");
 				removeDialog(DIALOG_KEY);
@@ -322,7 +387,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 				alert("对不起，服务端异常或者网络异常，请稍候重试");
 				removeDialog(DIALOG_KEY);
 				buttonLogin.setEnabled(true);
-				break; 
+				break;
 			default:
 				super.hasMessages(msg.what);
 				break;
@@ -336,8 +401,9 @@ public class LoginActivity extends Activity implements OnClickListener {
 		// 如果当前用户没有在本地保存过token，就重新注册一下
 		if (!userName.equals(jpushName) || "-1".equals(jpushId))
 			try {
+				String tk = HttpRequire.getMD5(HttpRequire.getBase64(userName));
 				System.out.println("新注册用户：" + userName);
-				jpushId = HttpRequire.regiestJpush(userName);
+				jpushId = HttpRequire.regiestJpush(userName, userName, tk);
 				mSharedPreferences.edit().putString("jpushuser", userName)
 						.commit();
 				mSharedPreferences.edit().putString("jpushId", jpushId)
@@ -419,6 +485,5 @@ public class LoginActivity extends Activity implements OnClickListener {
 		new AlertDialog.Builder(LoginActivity.this).setTitle("提示")
 				.setMessage(mess).setPositiveButton("确定", null).show();
 	}
- 
 
 }

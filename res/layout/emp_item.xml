@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_marginLeft="3dp"
+    android:layout_width="70dp"
+    android:layout_height="65dp"
+    android:layout_marginLeft="5dp"
     android:orientation="vertical" >
 
     <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:id="@+id/people"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/jpush_notification_icon" />
+        android:src="@drawable/man" />
 
     <TextView
         android:id="@+id/empName"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:ellipsize="end"
         android:singleLine="true"

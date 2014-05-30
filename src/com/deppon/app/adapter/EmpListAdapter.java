@@ -7,16 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.deppon.app.addressbook.R;
 import com.deppon.app.addressbook.AddressListActivity.EmpViewHolder;
+import com.deppon.app.addressbook.R;
 import com.deppon.app.addressbook.bean.EmployeeVO;
 
 /**
  * 横向的人员列表适配器.
+ * 
  * @author 130126
- *
+ * 
  */
 public class EmpListAdapter extends BaseAdapter {
 	private List<EmployeeVO> data;// 用于接收传递过来的Context对象
@@ -61,6 +63,8 @@ public class EmpListAdapter extends BaseAdapter {
 			convertView = mInflater.inflate(R.layout.emp_item, null);
 			viewHolder.empName = (TextView) convertView
 					.findViewById(R.id.empName);
+			viewHolder.people = (ImageView) convertView
+					.findViewById(R.id.people);
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (EmpViewHolder) convertView.getTag();
@@ -70,6 +74,11 @@ public class EmpListAdapter extends BaseAdapter {
 		if (null != markerItem) {
 			viewHolder.empName.setText(markerItem.getEmpName());
 			viewHolder.empName.setTag(markerItem.getEmpId() + "");
+			if ("m".equals(markerItem.getGender()))
+				viewHolder.people.setBackgroundResource(R.drawable.man);
+			else
+				viewHolder.people.setBackgroundResource(R.drawable.women);
+
 		}
 		return convertView;
 	}

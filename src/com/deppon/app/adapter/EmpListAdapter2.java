@@ -7,16 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.deppon.app.addressbook.R;
 import com.deppon.app.addressbook.AddressListActivity.EmpViewHolder2;
+import com.deppon.app.addressbook.R;
 import com.deppon.app.addressbook.bean.EmployeeVO;
 
 /**
  * 最后一个组织机构级别下面的人员列表竖向adapter.
+ * 
  * @author 130126
- *
+ * 
  */
 public class EmpListAdapter2 extends BaseAdapter {
 	private List<EmployeeVO> data;// 用于接收传递过来的Context对象
@@ -65,6 +67,10 @@ public class EmpListAdapter2 extends BaseAdapter {
 					.findViewById(R.id.jobName);
 			viewHolder.empPhone = (TextView) convertView
 					.findViewById(R.id.empPhone);
+			viewHolder.call = (ImageView) convertView
+					.findViewById(R.id.call);
+			viewHolder.shortmessage = (ImageView) convertView
+					.findViewById(R.id.shortmessage);
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (EmpViewHolder2) convertView.getTag();
@@ -76,6 +82,8 @@ public class EmpListAdapter2 extends BaseAdapter {
 			viewHolder.empPhone.setText(markerItem.getMobileNo());
 			viewHolder.jobname.setText(markerItem.getJobName());
 			viewHolder.empName.setTag(markerItem.getEmpId() + "");
+			viewHolder.call.setTag(markerItem.getMobileNo() + "");
+			viewHolder.shortmessage.setTag(markerItem.getMobileNo() + "");
 		}
 		return convertView;
 	}

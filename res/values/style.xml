@@ -15,6 +15,12 @@
         <item name="android:background">@drawable/search_ico</item>
     </style>
 
+    <style name="MyCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/checkbox_pass</item>
+        <item name="android:paddingLeft">25.0dip</item>
+        <item name="android:maxHeight">10.0dip</item>
+    </style>
+
     <style name="search_edit">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">0dp</item>
@@ -25,7 +31,8 @@
         <item name="android:layout_marginTop">1dp</item>
         <item name="android:layout_marginBottom">1dp</item>
     </style>
-    <style name="push_alias">
+
+    <style name="push_alias">
         <item name="android:hint">@string/alias_hint</item>
         <item name="android:textSize">14sp</item>
     </style>
