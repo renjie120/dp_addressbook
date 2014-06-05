@@ -13,6 +13,8 @@
     <string name="setting_su">设置成功</string>
     <string name="search">搜索</string>
     <string name="app_name">德邦通讯录</string>
+    <string name="emp_detail">职员详情</string>
+    <string name="about_title">关于</string>
     <string name="action_settings">Settings</string>
     <string name="name_title">账号：</string>
     <string name="title">登   录</string>
@@ -40,5 +42,7 @@
     <string name="img4_title">通讯录</string>
     <string name="img5_title">BI</string>
     <string name="img6_title">邮件</string>
+    <string name="shoushi_bar">手势密码</string>
+    <string name="version_bar">检查版本</string>
 
 </resources>

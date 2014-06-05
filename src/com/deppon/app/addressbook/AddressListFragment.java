@@ -46,6 +46,8 @@ public class AddressListFragment extends BaseFragment {
 	private OnAddressListRefreshListener listener;
 	public interface OnAddressListRefreshListener {
 		public void onShowAddressList(int root);
+		
+		public void onShowEmpdetail(int empId);
 	} 
 	public static final String ROOT_ID = "rootId";
 	public static final String USERID = "userId";
@@ -168,6 +170,7 @@ public class AddressListFragment extends BaseFragment {
 //
 //					new MyListLoader(true, Integer.parseInt(id)).execute("");
 				} else {
+					//得到empID
 					String id = "" + arg1.findViewById(R.id.empName).getTag();
 					goEmpDetail(id);
 				}
@@ -192,23 +195,25 @@ public class AddressListFragment extends BaseFragment {
 	 * 人员详情.
 	 */
 	public void goEmpDetail(String r) {
-		if (Constant.debug) {
-			myHandler.sendEmptyMessage(9);
-		} else {
-			try {
-				result = HttpRequire.getEmpDetail(r, loginUser, token);
-				// 如果返回数据不是1，就说明出现异常.
-				if (result.getErrorCode() < 0) {
-					myHandler.sendEmptyMessage(1);
-				}
-				// 否则就进行文件解析处理.
-				else {
-					myHandler.sendEmptyMessage(4);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+		listener.onShowEmpdetail(Integer.parseInt(r));
+//		if (Constant.debug) {
+//			myHandler.sendEmptyMessage(9);
+//		} else {
+//			try {
+//				System.out.println("查询人员详情："+r);
+//				result = HttpRequire.getEmpDetail(r, loginUser, token);
+//				// 如果返回数据不是1，就说明出现异常.
+//				if (result.getErrorCode() < 0) {
+//					myHandler.sendEmptyMessage(1);
+//				}
+//				// 否则就进行文件解析处理.
+//				else {
+//					myHandler.sendEmptyMessage(4);
+//				}
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 
 	@Override

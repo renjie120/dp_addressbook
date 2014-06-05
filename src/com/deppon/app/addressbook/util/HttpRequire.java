@@ -78,7 +78,7 @@ public class HttpRequire {
 	 * @throws Exception
 	 */
 	public static ServerResult getEmpDetail(String empID,String loginUser,String tk) throws Exception { 
-		return request(Constant.DPM_HOST + "/tongxunlu_getEmpDetail.action?id="
+		return request(Constant.DPM_HOST + "/dpm/tongxunlu_getEmpDetail.action?id="
 				+ empID
 				+ "&userId="+loginUser+"&token="+tk, null);
 	}

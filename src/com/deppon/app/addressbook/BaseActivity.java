@@ -6,20 +6,26 @@ import java.util.Date;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import cn.jpush.android.api.InstrumentedActivity;
 
+import com.deppon.app.addressbook.util.TextCleanTouch;
+import com.deppon.app.addressbook.util.TextCleanWatcher;
+
 /**
  * Activity基类，包含一些常用函数.
  */
-public class BaseActivity extends InstrumentedActivity { 
+public class BaseActivity extends InstrumentedActivity {
 
 	// 上下标题栏的高度比例
 	public static float barH = 0.1f;
@@ -41,6 +47,15 @@ public class BaseActivity extends InstrumentedActivity {
 	// 首页4字标题的宽度
 	public static float titleW4 = 70 / 267f;
 	public static float titleW6 = 123 / 264f;
+
+	public void addCleanBtn(EditText et) {
+		final Resources res = getResources();
+		Drawable mIconSearchClear = res
+				.getDrawable(R.drawable.txt_search_clear);
+		et.addTextChangedListener(new TextCleanWatcher(et, mIconSearchClear,
+				null));
+		et.setOnTouchListener(new TextCleanTouch(et));
+	}
 
 	public static String toDateString(Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yy/MM/dd");

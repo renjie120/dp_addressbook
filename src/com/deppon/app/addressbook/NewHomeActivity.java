@@ -8,7 +8,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.deppon.app.addressbook.bean.EmployeeVO;
+import com.deppon.app.addressbook.bean.ServerResult;
 import com.deppon.app.addressbook.util.ActionBar;
+import com.deppon.app.addressbook.util.HttpRequire;
 
 /**
  * 首页.
@@ -17,7 +22,9 @@ import com.deppon.app.addressbook.util.ActionBar;
  * 
  */
 public class NewHomeActivity extends FragmentActivity implements
-		HomeGridviewFragement.OnHomeGridViewSelectedListener,AddressListFragment.OnAddressListRefreshListener {
+		HomeGridviewFragement.OnHomeGridViewSelectedListener,
+		AddressListFragment.OnAddressListRefreshListener,
+		EmpDetailFragment.EmpDetailListRefreshListener {
 	private ActionBar head;
 	private String loginUser, token;
 	private static final int DIALOG_KEY = 0;
@@ -110,5 +117,35 @@ public class NewHomeActivity extends FragmentActivity implements
 		transaction.replace(R.id.tab_content, newFragment);
 		transaction.addToBackStack(null);
 		transaction.commit();
+	}
+
+	@Override
+	public void onShowEmpdetail(int empId) {
+		Bundle args = new Bundle();
+		ServerResult result;
+		try {
+			result = HttpRequire.getEmpDetail(empId + "", loginUser, token);
+			// 如果返回数据不是1，就说明出现异常.
+			if (result.getErrorCode() < 0) {
+				Toast.makeText(getApplicationContext(), "对不起查询人员出现异常....",
+						Toast.LENGTH_SHORT).show();
+			}
+			// 否则就进行文件解析处理.
+			else {
+				JSONObject json3 = result.getData();
+				args.putString(EmpDetailFragment.EMPINFO, json3.toJSONString());
+				EmpDetailFragment newFragment = new EmpDetailFragment();
+				FragmentTransaction transaction = getSupportFragmentManager()
+						.beginTransaction();
+				newFragment.setArguments(args);
+				transaction.replace(R.id.tab_content, newFragment);
+				transaction.addToBackStack(null);
+				transaction.commit();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }

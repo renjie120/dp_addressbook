@@ -4,22 +4,17 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Set;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -27,7 +22,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.ImageView;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
 
@@ -47,7 +41,7 @@ import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
 	private static final String url = Constant.DPM_HOST
 			+ "/dpm/login_login.action";  
 	// 登陆超时时间30秒
@@ -56,13 +50,7 @@ public class LoginActivity extends Activity {
 	// 密码
 	@ViewInject(R.id.inputPass)
 	private EditText inputPass;
-
-	@ViewInject(R.id.del_user)
-	private ImageView del_user;
-
-	@ViewInject(R.id.del_pass)
-	private ImageView del_pass;
-
+ 
 	// 用户名
 	@ViewInject(R.id.inputName)
 	private EditText inputUser;
@@ -84,27 +72,7 @@ public class LoginActivity extends Activity {
 	private static final int DIALOG_KEY = 0;
 	// 精度条
 	private ProgressDialog dialog;
-	/**
-	 * 搜索文本框变化内容之后自动搜索.
-	 */
-	private TextWatcher searchWatcher = new TextWatcher() {
-
-		public void onTextChanged(CharSequence s, int start, int before,
-				int count) {
-		}
-
-		public void beforeTextChanged(CharSequence s, int start, int count,
-				int after) {
-		}
-
-		public void afterTextChanged(Editable s) {
-			if ("".equals(s.toString())) {
-				del_pass.setVisibility(View.GONE);
-			} else {
-				del_pass.setVisibility(View.VISIBLE);
-			}
-		}
-	};
+	 
 
 	@OnClick({ R.id.buttonLogin })
 	public void loginButton(View v) {
@@ -117,62 +85,34 @@ public class LoginActivity extends Activity {
 		} else {
 			go(null);
 		}
-	}
+	} 
+ 
 
-	@OnClick({ R.id.del_pass })
-	public void cleanPass(View v) {
-		inputPass.setText("");
-	}
-
-	@OnClick({ R.id.del_user })
-	public void cleanUser(View v) {
-		inputUser.setText("");
-	}
-
-	private TextWatcher searchWatcher2 = new TextWatcher() {
-
-		public void onTextChanged(CharSequence s, int start, int before,
-				int count) {
-		}
-
-		public void beforeTextChanged(CharSequence s, int start, int count,
-				int after) {
-		}
-
-		public void afterTextChanged(Editable s) {
-			if ("".equals(s.toString())) {
-				del_user.setVisibility(View.GONE);
-			} else {
-				del_user.setVisibility(View.VISIBLE);
-			}
-		}
-	};
-
-	/**
-	 * 判断网络是否好用.
-	 * 
-	 * @param context
-	 * @return
-	 */
-	public boolean isNetworkConnected(Context context) {
-		try {
-			// 判断网络情况
-			if (context != null) {
-				// 链接管理器
-				ConnectivityManager mConnectivityManager = (ConnectivityManager) context
-						.getSystemService(Context.CONNECTIVITY_SERVICE);
-				NetworkInfo mNetworkInfo = mConnectivityManager
-						.getActiveNetworkInfo();
-				// 返回网络状态
-				if (mNetworkInfo != null) {
-					return mNetworkInfo.isAvailable();
-				}
-			}
-		} catch (Exception e) {
-			return false;
-		}
-		return false;
-	}
+//	/**
+//	 * 判断网络是否好用.
+//	 * 
+//	 * @param context
+//	 * @return
+//	 */
+//	public boolean isNetworkConnected(Context context) {
+//		try {
+//			// 判断网络情况
+//			if (context != null) {
+//				// 链接管理器
+//				ConnectivityManager mConnectivityManager = (ConnectivityManager) context
+//						.getSystemService(Context.CONNECTIVITY_SERVICE);
+//				NetworkInfo mNetworkInfo = mConnectivityManager
+//						.getActiveNetworkInfo();
+//				// 返回网络状态
+//				if (mNetworkInfo != null) {
+//					return mNetworkInfo.isAvailable();
+//				}
+//			}
+//		} catch (Exception e) {
+//			return false;
+//		}
+//		return false;
+//	}
 
 	private SharedPreferences mSharedPreferences;
 
@@ -257,12 +197,19 @@ public class LoginActivity extends Activity {
 			inputPass.setText(pass);
 			remeberPassword.setChecked(true);
 			inputUser.setText(user);
-			if (!"".equals(pass)) {
-				del_pass.setVisibility(View.VISIBLE);
+			
+			Drawable mIconSearchClear = getResources()
+					.getDrawable(R.drawable.txt_search_clear);
+			// 如果有用户名，就显示出来清除按钮.
+			if (!"".equals(inputPass.getText().toString())) {
+				inputPass.setCompoundDrawablesWithIntrinsicBounds(null, null,
+						mIconSearchClear, null);
 			}
-			if (!"".equals(user)) {
-				del_user.setVisibility(View.VISIBLE);
+			if (!"".equals(inputUser.getText().toString())) {
+				inputUser.setCompoundDrawablesWithIntrinsicBounds(null, null,
+						mIconSearchClear, null);
 			}
+			 
 			// 如果不是点击的返回按钮回退的，并且有文件，就直接登录.
 			if (!"true".equals(isBack)) {
 				if (in != null && in.getData() != null) {
@@ -272,10 +219,10 @@ public class LoginActivity extends Activity {
 				}
 			}
 		}
-
-		inputPass.addTextChangedListener(searchWatcher);
-		inputUser.addTextChangedListener(searchWatcher2);
-
+ 
+		addCleanBtn(inputPass);
+		addCleanBtn(inputUser);
+		
 	}
 
 	/**
