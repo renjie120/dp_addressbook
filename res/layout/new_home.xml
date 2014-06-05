@@ -5,23 +5,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <com.deppon.app.addressbook.util.ActionBar
-        android:id="@+id/homepage_head"
+ 
+    <FrameLayout
+        android:id="@+id/tab_content"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top" />
-
-    <GridView
-        android:id="@+id/GridView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/white"
-        android:columnWidth="90dp"
-        android:gravity="center"
-        android:numColumns="4"
-        android:padding="5dp"
-        android:stretchMode="columnWidth" >
-    </GridView>
-
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
+        android:background="#77557799" />
+ 
 </LinearLayout>

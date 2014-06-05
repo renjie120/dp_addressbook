@@ -329,8 +329,7 @@ public class LoginActivity extends Activity {
 			p.addBodyParameter("password", pass);
 			final String tk = HttpRequire.getMD5(HttpRequire.getBase64(uid));
 			p.addBodyParameter("token", tk);
-			http.configResponseTextCharset("GBK");
-			System.out.println("进行登陆：" + url + ",uid=" + uid + ",pass=" + pass);
+			http.configResponseTextCharset("GBK"); 
 			http.send(HttpRequest.HttpMethod.POST, url, p,
 					new RequestCallBack<String>() {
 						@Override

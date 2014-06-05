@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.renjie"
+    android:id="@+id/LinearLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <com.deppon.app.addressbook.util.ActionBar
+        android:id="@+id/homepage_head"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top" />
+
+    <GridView
+        android:id="@+id/GridView"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:columnWidth="90dp"
+        android:gravity="center"
+        android:numColumns="4"
+        android:padding="5dp"
+        android:stretchMode="columnWidth" >
+    </GridView>
+
+</LinearLayout>
