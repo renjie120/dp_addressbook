@@ -22,6 +22,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
 
@@ -41,16 +42,16 @@ import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity  {
 	private static final String url = Constant.DPM_HOST
-			+ "/dpm/login_login.action";  
+			+ "/dpm/login_login.action";
 	// 登陆超时时间30秒
 	public static final int TIMEOUT = 30;
 
 	// 密码
 	@ViewInject(R.id.inputPass)
 	private EditText inputPass;
- 
+
 	// 用户名
 	@ViewInject(R.id.inputName)
 	private EditText inputUser;
@@ -58,6 +59,8 @@ public class LoginActivity extends BaseActivity {
 	// 登陆地址
 	@ViewInject(R.id.buttonLogin)
 	private Button buttonLogin;
+	@ViewInject(R.id.all)
+	private LinearLayout all;
 
 	String deviceId = null;
 	// 记住密码
@@ -72,7 +75,6 @@ public class LoginActivity extends BaseActivity {
 	private static final int DIALOG_KEY = 0;
 	// 精度条
 	private ProgressDialog dialog;
-	 
 
 	@OnClick({ R.id.buttonLogin })
 	public void loginButton(View v) {
@@ -85,34 +87,33 @@ public class LoginActivity extends BaseActivity {
 		} else {
 			go(null);
 		}
-	} 
- 
+	}
 
-//	/**
-//	 * 判断网络是否好用.
-//	 * 
-//	 * @param context
-//	 * @return
-//	 */
-//	public boolean isNetworkConnected(Context context) {
-//		try {
-//			// 判断网络情况
-//			if (context != null) {
-//				// 链接管理器
-//				ConnectivityManager mConnectivityManager = (ConnectivityManager) context
-//						.getSystemService(Context.CONNECTIVITY_SERVICE);
-//				NetworkInfo mNetworkInfo = mConnectivityManager
-//						.getActiveNetworkInfo();
-//				// 返回网络状态
-//				if (mNetworkInfo != null) {
-//					return mNetworkInfo.isAvailable();
-//				}
-//			}
-//		} catch (Exception e) {
-//			return false;
-//		}
-//		return false;
-//	}
+	// /**
+	// * 判断网络是否好用.
+	// *
+	// * @param context
+	// * @return
+	// */
+	// public boolean isNetworkConnected(Context context) {
+	// try {
+	// // 判断网络情况
+	// if (context != null) {
+	// // 链接管理器
+	// ConnectivityManager mConnectivityManager = (ConnectivityManager) context
+	// .getSystemService(Context.CONNECTIVITY_SERVICE);
+	// NetworkInfo mNetworkInfo = mConnectivityManager
+	// .getActiveNetworkInfo();
+	// // 返回网络状态
+	// if (mNetworkInfo != null) {
+	// return mNetworkInfo.isAvailable();
+	// }
+	// }
+	// } catch (Exception e) {
+	// return false;
+	// }
+	// return false;
+	// }
 
 	private SharedPreferences mSharedPreferences;
 
@@ -128,6 +129,7 @@ public class LoginActivity extends BaseActivity {
 		JPushInterface.onPause(this);
 	}
 
+
 	Intent in = null;
 	// 打开文件
 	Uri openFile = null;
@@ -137,8 +139,8 @@ public class LoginActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.login);
-
 		ViewUtils.inject(this);
+	
 		JPushInterface.init(getApplicationContext());
 		// 手机临时存储变量
 		mSharedPreferences = PreferenceManager
@@ -197,9 +199,9 @@ public class LoginActivity extends BaseActivity {
 			inputPass.setText(pass);
 			remeberPassword.setChecked(true);
 			inputUser.setText(user);
-			
-			Drawable mIconSearchClear = getResources()
-					.getDrawable(R.drawable.txt_search_clear);
+
+			Drawable mIconSearchClear = getResources().getDrawable(
+					R.drawable.txt_search_clear);
 			// 如果有用户名，就显示出来清除按钮.
 			if (!"".equals(inputPass.getText().toString())) {
 				inputPass.setCompoundDrawablesWithIntrinsicBounds(null, null,
@@ -209,7 +211,7 @@ public class LoginActivity extends BaseActivity {
 				inputUser.setCompoundDrawablesWithIntrinsicBounds(null, null,
 						mIconSearchClear, null);
 			}
-			 
+
 			// 如果不是点击的返回按钮回退的，并且有文件，就直接登录.
 			if (!"true".equals(isBack)) {
 				if (in != null && in.getData() != null) {
@@ -219,10 +221,10 @@ public class LoginActivity extends BaseActivity {
 				}
 			}
 		}
- 
+
 		addCleanBtn(inputPass);
 		addCleanBtn(inputUser);
-		
+
 	}
 
 	/**
@@ -276,7 +278,7 @@ public class LoginActivity extends BaseActivity {
 			p.addBodyParameter("password", pass);
 			final String tk = HttpRequire.getMD5(HttpRequire.getBase64(uid));
 			p.addBodyParameter("token", tk);
-			http.configResponseTextCharset("GBK"); 
+			http.configResponseTextCharset("GBK");
 			http.send(HttpRequest.HttpMethod.POST, url, p,
 					new RequestCallBack<String>() {
 						@Override
@@ -431,5 +433,7 @@ public class LoginActivity extends BaseActivity {
 		new AlertDialog.Builder(LoginActivity.this).setTitle("提示")
 				.setMessage(mess).setPositiveButton("确定", null).show();
 	}
+
+	 
 
 }

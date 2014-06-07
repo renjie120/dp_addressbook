@@ -24,6 +24,18 @@ public class OrganizationVO implements Serializable {
 	private static final long serialVersionUID = 4409637740522012381L;
 	private int start;
 	private int limit;
+	/**
+	 * 是否要继续特殊处理，直接显示出来.
+	 */
+	private boolean specical;
+
+	public boolean isSpecical() {
+		return specical;
+	}
+
+	public void setSpecical(boolean specical) {
+		this.specical = specical;
+	}
 
 	public int getStart() {
 		return start;

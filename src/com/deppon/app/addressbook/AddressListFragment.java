@@ -2,7 +2,6 @@ package com.deppon.app.addressbook;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
@@ -44,11 +43,15 @@ import com.deppon.app.addressbook.util.HttpRequire;
  */
 public class AddressListFragment extends BaseFragment {
 	private OnAddressListRefreshListener listener;
+
 	public interface OnAddressListRefreshListener {
 		public void onShowAddressList(int root);
-		
+
 		public void onShowEmpdetail(int empId);
-	} 
+
+		public void back();
+	}
+
 	public static final String ROOT_ID = "rootId";
 	public static final String USERID = "userId";
 	public static final String TOKEN = "token";
@@ -75,8 +78,8 @@ public class AddressListFragment extends BaseFragment {
 	private EmpListAdapter adapter2;
 	private float screenHeight = 0;
 	private float screenWidth = 0;
-	private LinkedList<String> ids = new LinkedList<String>();
 	private String parentOrgs = "";
+	private ActionBar head;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -89,37 +92,6 @@ public class AddressListFragment extends BaseFragment {
 					+ " must implement OnAddressListRefreshListener");
 		}
 	}
-	
-	/**
-	 * 查看活动详情.
-	 * 
-	 * @param arg0
-	 */
-	public void seeDetail(View arg0) {
-		// LinearLayout layout = (LinearLayout) arg0;
-		// Intent intent = new Intent(AddressListFragment.this.getActivity(),
-		// ActivitesInfo.class);
-		// intent.putExtra("eventid", layout.getTag().toString());
-		// intent.putExtra("token", token);
-		// intent.putExtra("auth", auth);
-		// this.startActivity(intent);
-	}
-
-	/**
-	 * 取消搜索框里面的文字信息.
-	 * 
-	 * @param arg0
-	 */
-	public void cancel(View arg0) {
-		// LinearLayout layout = (LinearLayout) arg0;
-		// Intent intent = new Intent(ActivitesList.this, ActivitesInfo.class);
-		// intent.putExtra("eventid", layout.getTag().toString());
-		// intent.putExtra("token", token);
-		// intent.putExtra("auth", auth);
-		// this.startActivity(intent);
-	}
-
-	private ActionBar head;
 
 	/**
 	 * 设置初始化界面.
@@ -130,7 +102,7 @@ public class AddressListFragment extends BaseFragment {
 		head.setLeftAction(new AbstractAction(R.drawable.logo) {
 			@Override
 			public void performAction(View view) {
-
+				listener.back();
 			}
 		});
 		list = (ListView) findViewById(R.id.ListView);
@@ -148,7 +120,6 @@ public class AddressListFragment extends BaseFragment {
 		// 加载listview
 		new MyListLoader(true, rootId).execute("");
 
-		
 		list.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -158,19 +129,9 @@ public class AddressListFragment extends BaseFragment {
 					String id = "" + arg1.findViewById(R.id.orgname).getTag();
 					String parentId = ""
 							+ arg1.findViewById(R.id.orgparent).getTag();
-					ids.addLast(id);
-					System.out.println("当前查看的节点id是："+id);
 					listener.onShowAddressList(Integer.parseInt(id));
-					
-//					if ("".equals(parentOrgs)) {
-//						parentOrgs = parentId;
-//					} else {
-//						parentOrgs += "," + parentId;
-//					}
-//
-//					new MyListLoader(true, Integer.parseInt(id)).execute("");
 				} else {
-					//得到empID
+					// 得到empID
 					String id = "" + arg1.findViewById(R.id.empName).getTag();
 					goEmpDetail(id);
 				}
@@ -184,8 +145,6 @@ public class AddressListFragment extends BaseFragment {
 					long arg3) {
 				String id = "" + arg1.findViewById(R.id.empName).getTag();
 				goEmpDetail(id);
-				// ids.addLast(id);
-				// new MyListLoader(true, Integer.parseInt(id)).execute("");
 			}
 
 		});
@@ -196,30 +155,11 @@ public class AddressListFragment extends BaseFragment {
 	 */
 	public void goEmpDetail(String r) {
 		listener.onShowEmpdetail(Integer.parseInt(r));
-//		if (Constant.debug) {
-//			myHandler.sendEmptyMessage(9);
-//		} else {
-//			try {
-//				System.out.println("查询人员详情："+r);
-//				result = HttpRequire.getEmpDetail(r, loginUser, token);
-//				// 如果返回数据不是1，就说明出现异常.
-//				if (result.getErrorCode() < 0) {
-//					myHandler.sendEmptyMessage(1);
-//				}
-//				// 否则就进行文件解析处理.
-//				else {
-//					myHandler.sendEmptyMessage(4);
-//				}
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		ids.addFirst(rootId + "");
 		initAddress();
 	}
 
@@ -248,25 +188,51 @@ public class AddressListFragment extends BaseFragment {
 				// 得到全部的组织列表
 				List<OrganizationVO> orgs = t.getOrgs();
 				List<EmployeeVO> employees = t.getEmps();
-				// 如果有人员和组织机构，就显示两个列表
-				if (orgs != null && orgs.size() > 0) {
-					isLastLevel = false;
-					list2.setVisibility(View.VISIBLE);
-					adapter = new OrgListAdapter(orgs,
-							AddressListFragment.this.getActivity(),
-							screenWidth, screenHeight);
-					adapter2 = new EmpListAdapter(employees,
-							AddressListFragment.this.getActivity(),
-							screenWidth, screenHeight);
-					list2.setAdapter(adapter2);
-					list.setAdapter(adapter);
+				System.out.println(" 当前查询的rootId==" + rootId);
+				if (rootId != 104) {
+					// 如果有人员和组织机构，就显示两个列表
+					if (orgs != null && orgs.size() > 0) {
+						isLastLevel = false;
+						list2.setVisibility(View.VISIBLE);
+						adapter = new OrgListAdapter(orgs,
+								AddressListFragment.this.getActivity(),
+								screenWidth, screenHeight);
+						adapter2 = new EmpListAdapter(employees,
+								AddressListFragment.this.getActivity(),
+								screenWidth, screenHeight);
+						list2.setAdapter(adapter2);
+						list.setAdapter(adapter);
+					} else {
+						isLastLevel = true;
+						list2.setVisibility(View.GONE);
+						adapter3 = new EmpListAdapter2(employees,
+								AddressListFragment.this.getActivity(),
+								screenWidth, screenHeight);
+						list.setAdapter(adapter3);
+					}
 				} else {
-					isLastLevel = true;
 					list2.setVisibility(View.GONE);
-					adapter3 = new EmpListAdapter2(employees,
-							AddressListFragment.this.getActivity(),
-							screenWidth, screenHeight);
-					list.setAdapter(adapter3);
+					OrganizationVO v = new OrganizationVO();
+					v.setSpecical(true);
+					v.setOrgId(-1);
+					v.setParentId(0);
+					v.setOrgName("总裁");
+					// 如果有人员和组织机构，就显示两个列表
+					if (orgs != null && orgs.size() > 0) {
+						orgs.add(0, v);
+						isLastLevel = false;
+						adapter = new OrgListAdapter(orgs,
+								AddressListFragment.this.getActivity(),
+								screenWidth, screenHeight);
+						list.setAdapter(adapter);
+					} else {
+						isLastLevel = true;
+						list2.setVisibility(View.GONE);
+						adapter3 = new EmpListAdapter2(employees,
+								AddressListFragment.this.getActivity(),
+								screenWidth, screenHeight);
+						list.setAdapter(adapter3);
+					}
 				}
 				break;
 			// 人员详情

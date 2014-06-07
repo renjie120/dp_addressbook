@@ -40,8 +40,9 @@ import com.deppon.app.addressbook.util.HttpRequire;
 
 /**
  * 通讯录首页.
+ * 
  * @author 130126
- *
+ * 
  */
 public class AddressListActivity extends BaseActivity {
 	private ListView list;
@@ -165,8 +166,8 @@ public class AddressListActivity extends BaseActivity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-					//如果不是最后一个级别的列表，就进行下一级的显示.
-				if (!isLastLevel){
+				// 如果不是最后一个级别的列表，就进行下一级的显示.
+				if (!isLastLevel) {
 					String id = "" + arg1.findViewById(R.id.orgname).getTag();
 					String parentId = ""
 							+ arg1.findViewById(R.id.orgparent).getTag();
@@ -176,10 +177,9 @@ public class AddressListActivity extends BaseActivity {
 					} else {
 						parentOrgs += "," + parentId;
 					}
-				
+
 					new MyListLoader(true, Integer.parseInt(id)).execute("");
-				}
-				else{
+				} else {
 					String id = "" + arg1.findViewById(R.id.empName).getTag();
 					goEmpDetail(id);
 				}
@@ -209,7 +209,7 @@ public class AddressListActivity extends BaseActivity {
 			myHandler.sendEmptyMessage(9);
 		} else {
 			try {
-				result = HttpRequire.getEmpDetail(r,loginUser,token);
+				result = HttpRequire.getEmpDetail(r, loginUser, token);
 				// 如果返回数据不是1，就说明出现异常.
 				if (result.getErrorCode() < 0) {
 					myHandler.sendEmptyMessage(1);
@@ -243,7 +243,7 @@ public class AddressListActivity extends BaseActivity {
 
 		setContentView(R.layout.addresslist);
 		JPushInterface.init(getApplicationContext());
-		ids.addFirst(rootId+"");
+		ids.addFirst(rootId + "");
 		initAddress();
 	}
 
@@ -392,7 +392,7 @@ public class AddressListActivity extends BaseActivity {
 			myHandler.sendEmptyMessage(9);
 		} else {
 			try {
-				result = HttpRequire.getOrgByChildern(r,loginUser,token);
+				result = HttpRequire.getOrgByChildern(r, loginUser, token);
 				// 如果返回数据不是1，就说明出现异常.
 				if (result.getErrorCode() < 0) {
 					myHandler.sendEmptyMessage(1);
@@ -406,11 +406,11 @@ public class AddressListActivity extends BaseActivity {
 			}
 		}
 	}
- 
-	
 
 	public final static class ViewHolder {
 		public TextView name;
+		public ImageView img;
+		public ImageView you;
 		public TextView parent;
 	}
 

@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import com.deppon.app.addressbook.util.ActionBar;
 import com.deppon.app.addressbook.util.ActionBar.AbstractAction;
@@ -39,6 +37,8 @@ public class HomeGridviewFragement extends BaseFragment {
 
 	public interface OnHomeGridViewSelectedListener {
 		public void onTongxunluSelected(int index);
+
+		public void back();
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class HomeGridviewFragement extends BaseFragment {
 		head.setLeftAction(new AbstractAction(R.drawable.logo) {
 			@Override
 			public void performAction(View view) {
-
+				listener.back();
 			}
 		});
 

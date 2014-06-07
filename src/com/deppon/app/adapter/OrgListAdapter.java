@@ -7,16 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.deppon.app.addressbook.R;
 import com.deppon.app.addressbook.AddressListActivity.ViewHolder;
+import com.deppon.app.addressbook.R;
 import com.deppon.app.addressbook.bean.OrganizationVO;
 
 /**
  * 组织机构列表适配器 .
+ * 
  * @author 130126
- *
+ * 
  */
 public class OrgListAdapter extends BaseAdapter {
 	private List<OrganizationVO> data;// 用于接收传递过来的Context对象
@@ -60,6 +62,8 @@ public class OrgListAdapter extends BaseAdapter {
 			LayoutInflater mInflater = LayoutInflater.from(context);
 			convertView = mInflater.inflate(R.layout.org_item, null);
 			viewHolder.name = (TextView) convertView.findViewById(R.id.orgname);
+			viewHolder.you = (ImageView) convertView.findViewById(R.id.you);
+			viewHolder.img = (ImageView) convertView.findViewById(R.id.img);
 			viewHolder.parent = (TextView) convertView
 					.findViewById(R.id.orgparent);
 			convertView.setTag(viewHolder);
@@ -71,6 +75,13 @@ public class OrgListAdapter extends BaseAdapter {
 		if (null != markerItem) {
 			viewHolder.name.setText(markerItem.getOrgName());
 			viewHolder.name.setTag(markerItem.getOrgId() + "");
+			if (markerItem.isSpecical()) {
+				viewHolder.you.setVisibility(View.GONE);
+				viewHolder.img.setVisibility(View.VISIBLE);
+			} else {
+				viewHolder.you.setVisibility(View.VISIBLE);
+				viewHolder.img.setVisibility(View.GONE);
+			}
 			viewHolder.parent.setTag(markerItem.getParentId());
 		}
 		return convertView;

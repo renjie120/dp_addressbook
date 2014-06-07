@@ -11,20 +11,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top" />
 
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/jpush_notification_icon" />
-
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
         <TextView
-            style="@style/text_style"
-            android:text="用户名" >
+            style="@style/text_style2"
+            android:text="姓名" >
         </TextView>
 
         <TextView
@@ -36,20 +30,14 @@
             android:singleLine="true"
             android:textColor="@color/black" >
         </TextView>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
 
         <TextView
-            style="@style/text_style"
-            android:text="邮件" >
+            style="@style/text_style2"
+            android:text="工号" >
         </TextView>
 
         <TextView
-            android:id="@+id/empEmail"
+            android:id="@+id/empNo"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_gravity="center_horizontal"
@@ -65,9 +53,15 @@
         android:orientation="horizontal" >
 
         <TextView
-            style="@style/text_style"
-            android:text="手机号码" >
+            style="@style/text_style2"
+            android:text="手机" >
         </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/empPhone"
@@ -78,6 +72,18 @@
             android:singleLine="true"
             android:textColor="@color/black" >
         </TextView>
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/img_18" />
+
+        <ImageView
+            android:layout_width="30dp" 
+            android:id="@+id/callHome"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
+            android:src="@drawable/img_19" />
     </LinearLayout>
 
     <LinearLayout
@@ -86,12 +92,18 @@
         android:orientation="horizontal" >
 
         <TextView
-            style="@style/text_style"
-            android:text="地址" >
+            style="@style/text_style2"
+            android:text="办公电话" >
         </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/empAddress"
+            android:id="@+id/empPhone2"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_gravity="center_horizontal"
@@ -99,6 +111,12 @@
             android:singleLine="true"
             android:textColor="@color/black" >
         </TextView>
+
+        <ImageView
+            android:id="@+id/callHome"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/img_18" />
     </LinearLayout>
 
     <LinearLayout
@@ -107,8 +125,46 @@
         android:orientation="horizontal" >
 
         <TextView
-            style="@style/text_style"
-            android:text="组织机构" >
+            style="@style/text_style2"
+            android:text="邮箱" >
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/empEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/black" >
+        </TextView>
+
+        <ImageView
+            android:id="@+id/sendEmail"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/img_23" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/black" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/text_style2"
+            android:text="部门" >
         </TextView>
 
         <TextView
@@ -128,8 +184,8 @@
         android:orientation="horizontal" >
 
         <TextView
-            style="@style/text_style"
-            android:text="用户职称" >
+            style="@style/text_style2"
+            android:text="职位" >
         </TextView>
 
         <TextView
@@ -146,26 +202,22 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/call"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:singleLine="true"
-            android:text="打电话"
-            android:textColor="@color/black" >
-        </Button>
+        <TextView
+            style="@style/text_style2"
+            android:text="工作职责" >
+        </TextView>
 
-        <Button
-            android:id="@+id/message"
+        <TextView
+            android:id="@+id/jobSequce"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            android:ellipsize="end"
             android:singleLine="true"
-            android:text="发短信"
             android:textColor="@color/black" >
-        </Button>
+        </TextView>
     </LinearLayout>
 
 </LinearLayout>

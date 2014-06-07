@@ -75,9 +75,9 @@ public class EmpListAdapter extends BaseAdapter {
 			viewHolder.empName.setText(markerItem.getEmpName());
 			viewHolder.empName.setTag(markerItem.getEmpId() + "");
 			if ("m".equals(markerItem.getGender()))
-				viewHolder.people.setBackgroundResource(R.drawable.man);
+				viewHolder.people.setBackgroundResource(R.drawable.man2);
 			else
-				viewHolder.people.setBackgroundResource(R.drawable.women);
+				viewHolder.people.setBackgroundResource(R.drawable.women2);
 
 		}
 		return convertView;
