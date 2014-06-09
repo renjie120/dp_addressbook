@@ -27,6 +27,8 @@ public class EmpQueryActivity extends FragmentActivity implements
 	private String loginUser, token;
 	private LinearLayout all;
 	private GestureDetector detector;
+	private static final int DIALOG_KEY = 0;
+	private ProgressDialog dialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +63,6 @@ public class EmpQueryActivity extends FragmentActivity implements
 					.add(R.id.tab_content, firstFragment).commit();
 		}
 	}
- 
-
-	private static final int DIALOG_KEY = 0;
-	private ProgressDialog dialog;
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
