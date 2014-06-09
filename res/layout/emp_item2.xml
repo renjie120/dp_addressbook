@@ -26,10 +26,12 @@
 
     <TextView
         android:id="@+id/empPhone"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="30dp"
         android:layout_gravity="center_horizontal"
         android:layout_toRightOf="@id/empName"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:textColor="@color/black"
         android:textSize="8pt" >
     </TextView>
@@ -54,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="30dp"
-        android:layout_toRightOf="@id/empPhone"
+        android:layout_toRightOf="@id/jobName"
         android:onClick="call"
         android:src="@drawable/img_18" />
 
@@ -68,5 +70,12 @@
         android:layout_toRightOf="@id/call"
         android:onClick="sendMessage"
         android:src="@drawable/img_19" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="10dp" 
+        android:layout_below="@id/jobName"
+        android:background="@color/gray" />
 
 </RelativeLayout>

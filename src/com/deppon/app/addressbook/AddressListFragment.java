@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -44,12 +45,34 @@ import com.deppon.app.addressbook.util.HttpRequire;
 public class AddressListFragment extends BaseFragment {
 	private OnAddressListRefreshListener listener;
 
+	/**
+	 * 从fragment中操作页面的跳转的接口.
+	 * @author 130126
+	 *
+	 */
 	public interface OnAddressListRefreshListener {
+		/**
+		 * 显示根节点下面的孩子节点信息.
+		 * @param root
+		 */
 		public void onShowAddressList(int root);
 
+		/**
+		 * 显示人员详情界面.
+		 * @param empId
+		 */
 		public void onShowEmpdetail(int empId);
 
+		/**
+		 * 点击左上角按钮进行回退.
+		 */
 		public void back();
+		
+		/**
+		 * 页面的向右滑动进行页面的退回.
+		 * @param event
+		 */
+		public void leftBack(MotionEvent event);
 	}
 
 	public static final String ROOT_ID = "rootId";
@@ -166,7 +189,6 @@ public class AddressListFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		System.out.println("HomeGridviewFragement____onCreateView");
 		return inflater.inflate(R.layout.addresslist, container, false);
 	}
 
@@ -188,7 +210,16 @@ public class AddressListFragment extends BaseFragment {
 				// 得到全部的组织列表
 				List<OrganizationVO> orgs = t.getOrgs();
 				List<EmployeeVO> employees = t.getEmps();
-				System.out.println(" 当前查询的rootId==" + rootId);
+				list.setDivider(null);
+				list.setOnTouchListener(new View.OnTouchListener() {
+					public boolean onTouch(View v, MotionEvent event) {
+						// TODO Auto-generated method stub
+						listener.leftBack(event);
+//						getActivity().getGestureDetector().onTouchEvent(event);// 需要这样写！
+						return false;
+					}
+				});
+				// 如果不是根节点，就显示正常的数据
 				if (rootId != 104) {
 					// 如果有人员和组织机构，就显示两个列表
 					if (orgs != null && orgs.size() > 0) {
@@ -210,7 +241,9 @@ public class AddressListFragment extends BaseFragment {
 								screenWidth, screenHeight);
 						list.setAdapter(adapter3);
 					}
-				} else {
+				}
+				// 否则显示一个独立的总裁节点，并且不显示下面的人
+				else {
 					list2.setVisibility(View.GONE);
 					OrganizationVO v = new OrganizationVO();
 					v.setSpecical(true);

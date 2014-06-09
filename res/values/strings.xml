@@ -44,5 +44,7 @@
     <string name="img6_title">邮件</string>
     <string name="shoushi_bar">手势密码</string>
     <string name="version_bar">检查版本</string>
+    <string name="search_emp_hint">请输入姓名/工号</string>
+    <string name="search_org_hint">请输入部门名称</string>
 
 </resources>

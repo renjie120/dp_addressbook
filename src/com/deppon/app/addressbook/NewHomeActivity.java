@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -11,7 +12,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -184,12 +184,15 @@ public class NewHomeActivity extends FragmentActivity implements
 	 */
 	@Override
 	public void back() {
-		getSupportFragmentManager().popBackStack();
+		FragmentManager fm = getSupportFragmentManager();
+		fm.popBackStack();
+		System.out.println("getBackStackEntryCount:::"
+				+ fm.getBackStackEntryCount());
 	}
 
 	@Override
-	public boolean onDown(MotionEvent e) { 
-		System.out.println("onDown"); 
+	public boolean onDown(MotionEvent e) {
+		System.out.println("onDown");
 		return false;
 	}
 
@@ -197,58 +200,55 @@ public class NewHomeActivity extends FragmentActivity implements
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
 		// e1 触摸的起始位置，e2 触摸的结束位置，velocityX X轴每一秒移动的像素速度（大概这个意思） velocityY
-		// 就是Ｙ咯
-		// 手势左,上为正 ——，右，下为负正
-		if (e2.getX() - e1.getX() > 50) {
-			// 为什么是50？ 这个根据你的模拟器大小来定，看看模拟器宽度，e2.getX()-e1.getX()<屏幕宽度就ＯＫ
-			Toast.makeText(getApplicationContext(), "向右滑动", Toast.LENGTH_LONG)
-					.show();
-			// 要触发什么事件都在这里写就OK
-			// 如果要跳转到另外一个activity
-			// Intent intent = new Intent(Gest01Activity.this,
-			// toActivity.class);
-			// startActivity(intent);
+		if (e2.getX() - e1.getX() > 50 ) {
+			FragmentManager fm = getSupportFragmentManager();
+			fm.popBackStack();
 		}
-		if (Math.abs(e2.getX() - e1.getX()) > 50) {
-			Toast.makeText(getApplicationContext(), "向左滑动", Toast.LENGTH_LONG)
-					.show();
-		}
-		if (Math.abs(e2.getY() - e1.getY()) > 50) {
-			Toast.makeText(getApplicationContext(), "向上滑动", Toast.LENGTH_LONG)
-					.show();
-		}
-		if (e2.getY() - e1.getY() > 50) {
-			Toast.makeText(getApplicationContext(), "向下滑动", Toast.LENGTH_LONG)
-					.show();
-		}
+		// if (Math.abs(e2.getX() - e1.getX()) > 50) {
+		// Toast.makeText(getApplicationContext(), "向左滑动", Toast.LENGTH_SHORT)
+		// .show();
+		// }
+		// if (Math.abs(e2.getY() - e1.getY()) > 50) {
+		// Toast.makeText(getApplicationContext(), "向上滑动", Toast.LENGTH_SHORT)
+		// .show();
+		// }
+		// if (e2.getY() - e1.getY() > 50) {
+		// Toast.makeText(getApplicationContext(), "向下滑动", Toast.LENGTH_SHORT)
+		// .show();
+		// }
 		return false;
 	}
 
 	@Override
 	public void onLongPress(MotionEvent e) {
-		System.out.println("onLongPress");  
+		System.out.println("onLongPress");
 	}
 
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-			float distanceY) { 
-		System.out.println("onScroll");  
+			float distanceY) {
+		System.out.println("onScroll");
 		return false;
 	}
 
 	@Override
 	public void onShowPress(MotionEvent e) {
-		System.out.println("onShowPress");   
+		System.out.println("onShowPress");
 	}
 
 	@Override
-	public boolean onSingleTapUp(MotionEvent e) { 
-		System.out.println("onSingleTapUp");   
+	public boolean onSingleTapUp(MotionEvent e) {
+		System.out.println("onSingleTapUp");
 		return false;
 	}
 
 	@Override
 	public boolean onTouch(View arg0, MotionEvent arg1) {
 		return onTouchEvent(arg1);
+	}
+
+	@Override
+	public void leftBack(MotionEvent event) {
+		detector.onTouchEvent(event);
 	}
 }

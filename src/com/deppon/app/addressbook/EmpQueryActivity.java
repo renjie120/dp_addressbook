@@ -15,10 +15,9 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -29,14 +28,15 @@ import com.deppon.app.addressbook.bean.OrganizationVO;
 import com.deppon.app.addressbook.bean.ServerResult;
 import com.deppon.app.addressbook.bean.ServerResults;
 import com.deppon.app.addressbook.util.ActionBar;
+import com.deppon.app.addressbook.util.ActionBar.AbstractAction;
 import com.deppon.app.addressbook.util.Constant;
 import com.deppon.app.addressbook.util.HttpRequire;
-import com.deppon.app.addressbook.util.ActionBar.AbstractAction;
 
 public class EmpQueryActivity extends BaseActivity {
 	private EditText searchText;
-	private TextView searchBtn;
-	private Button searchEmp, searchOrg, cancelBtn;
+	// private TextView searchBtn;cancelBtn;
+	private ImageView searchEmp, searchOrg;
+	private ImageView searchImage;
 	private ListView list;
 	private boolean isSearchEmp = true;
 	private ServerResults results;
@@ -60,6 +60,7 @@ public class EmpQueryActivity extends BaseActivity {
 			case 3:
 				// 从url返回的数据进行解析，然后加载到列表中.
 				List json = results.getData();
+				list.setDivider(null);
 				if (json != null && json.size() > 0) {
 					List<EmployeeVO> emps = new ArrayList<EmployeeVO>(
 							json.size());
@@ -78,10 +79,12 @@ public class EmpQueryActivity extends BaseActivity {
 							EmpQueryActivity.this, 0, 0);
 					list.setAdapter(empAdapter);
 				}
+
 				break;
 			// 显示组织机构
 			case 2:
 				List json2 = results.getData();
+				list.setDivider(null);
 				if (json2 != null && json2.size() > 0) {
 					List<OrganizationVO> orgs = new ArrayList<OrganizationVO>(
 							json2.size());
@@ -141,6 +144,18 @@ public class EmpQueryActivity extends BaseActivity {
 		}
 	}
 
+	private void setImage(boolean isSearchEmp) {
+		if(isSearchEmp){
+			searchOrg.setBackgroundResource(R.drawable.zuzhi);
+			searchEmp.setBackgroundResource(R.drawable.renyuan); 
+			searchText.setHint(R.string.search_emp_hint);
+		}else{
+			searchOrg.setBackgroundResource(R.drawable.zuzhi2);
+			searchEmp.setBackgroundResource(R.drawable.renyuan2);
+			searchText.setHint(R.string.search_org_hint);
+		}
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -148,10 +163,11 @@ public class EmpQueryActivity extends BaseActivity {
 		setContentView(R.layout.emp_query);
 		// 用户密码
 		searchText = (EditText) findViewById(R.id.searchText);
-		searchEmp = (Button) findViewById(R.id.searchEmp);
-		searchOrg = (Button) findViewById(R.id.searchOrg);
-		searchBtn = (TextView) findViewById(R.id.searchBtn);
-		cancelBtn = (Button) findViewById(R.id.cancelBtn);
+		searchImage = (ImageView) findViewById(R.id.searchImage);
+		searchEmp = (ImageView) findViewById(R.id.searchEmp);
+		searchOrg = (ImageView) findViewById(R.id.searchOrg);
+		// searchBtn = (TextView) findViewById(R.id.searchBtn);
+		// cancelBtn = (Button) findViewById(R.id.cancelBtn);
 		list = (ListView) findViewById(R.id.ListView);
 		// 去掉分割线。。
 		list.setDivider(null);
@@ -166,18 +182,19 @@ public class EmpQueryActivity extends BaseActivity {
 			}
 		});
 
-		cancelBtn.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				searchText.setText("");
-			}
-
-		});
+		// cancelBtn.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// searchText.setText("");
+		// }
+		//
+		// });
 		searchOrg.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				isSearchEmp = false;
+				setImage(isSearchEmp);
 			}
 		});
 
@@ -185,11 +202,12 @@ public class EmpQueryActivity extends BaseActivity {
 			@Override
 			public void onClick(View arg0) {
 				isSearchEmp = true;
+				setImage(isSearchEmp);
 			}
 
 		});
 
-		searchBtn.setOnClickListener(new OnClickListener() {
+		searchImage.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
