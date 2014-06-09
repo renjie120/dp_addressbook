@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.deppon.app.addressbook.AddressListActivity.EmpViewHolder2;
+import com.deppon.app.addressbook.AddressListFragment.EmpViewHolder2;
 import com.deppon.app.addressbook.R;
 import com.deppon.app.addressbook.bean.EmployeeVO;
 

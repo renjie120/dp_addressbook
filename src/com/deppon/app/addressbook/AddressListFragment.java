@@ -47,18 +47,21 @@ public class AddressListFragment extends BaseFragment {
 
 	/**
 	 * 从fragment中操作页面的跳转的接口.
+	 * 
 	 * @author 130126
-	 *
+	 * 
 	 */
 	public interface OnAddressListRefreshListener {
 		/**
 		 * 显示根节点下面的孩子节点信息.
+		 * 
 		 * @param root
 		 */
 		public void onShowAddressList(int root);
 
 		/**
 		 * 显示人员详情界面.
+		 * 
 		 * @param empId
 		 */
 		public void onShowEmpdetail(int empId);
@@ -67,9 +70,10 @@ public class AddressListFragment extends BaseFragment {
 		 * 点击左上角按钮进行回退.
 		 */
 		public void back();
-		
+
 		/**
 		 * 页面的向右滑动进行页面的退回.
+		 * 
 		 * @param event
 		 */
 		public void leftBack(MotionEvent event);
@@ -215,7 +219,8 @@ public class AddressListFragment extends BaseFragment {
 					public boolean onTouch(View v, MotionEvent event) {
 						// TODO Auto-generated method stub
 						listener.leftBack(event);
-//						getActivity().getGestureDetector().onTouchEvent(event);// 需要这样写！
+						// getActivity().getGestureDetector().onTouchEvent(event);//
+						// 需要这样写！
 						return false;
 					}
 				});
@@ -271,14 +276,14 @@ public class AddressListFragment extends BaseFragment {
 			// 人员详情
 			case 4:
 				// 从url返回的数据进行解析，然后加载到列表中.
-				JSONObject json2 = result.getData();
-				EmployeeVO t2 = (EmployeeVO) JSON.parseObject(
-						json2.toJSONString(), EmployeeVO.class);
-				Intent intent = new Intent(
-						AddressListFragment.this.getActivity(),
-						EmpDetailActivity.class);
-				intent.putExtra("empDetail", t2);
-				startActivity(intent);
+//				JSONObject json2 = result.getData();
+//				EmployeeVO t2 = (EmployeeVO) JSON.parseObject(
+//						json2.toJSONString(), EmployeeVO.class);
+//				Intent intent = new Intent(
+//						AddressListFragment.this.getActivity(),
+//						EmpDetailActivity.class);
+//				intent.putExtra("empDetail", t2);
+//				startActivity(intent);
 				break;
 			// 人员查询界面
 			case 5:
@@ -364,6 +369,8 @@ public class AddressListFragment extends BaseFragment {
 
 	public final static class ViewHolder {
 		public TextView name;
+		public ImageView img;
+		public ImageView you;
 		public TextView parent;
 	}
 
@@ -379,4 +386,23 @@ public class AddressListFragment extends BaseFragment {
 		public ImageView call;
 		public ImageView shortmessage;
 	}
+
+//	public final static class ViewHolder {
+//		public TextView name;
+//		public TextView parent;
+//	}
+//
+//	public final static class EmpViewHolder {
+//		public TextView empName;
+//		public ImageView people;
+//	}
+
+//	public final static class EmpViewHolder2 {
+//		public TextView jobname;
+//		public TextView empName;
+//		public TextView empPhone;
+//		public ImageView call;
+//		public ImageView shortmessage;
+//	}
+
 }

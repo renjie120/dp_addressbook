@@ -1,264 +1,67 @@
 package com.deppon.app.addressbook;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.alibaba.fastjson.JSONObject;
+import com.deppon.app.addressbook.bean.ServerResult;
+import com.deppon.app.addressbook.util.HttpRequire;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.View.OnTouchListener;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.deppon.app.adapter.EmpListAdapter2;
-import com.deppon.app.adapter.OrgListAdapter;
-import com.deppon.app.addressbook.bean.EmployeeVO;
-import com.deppon.app.addressbook.bean.OrganizationVO;
-import com.deppon.app.addressbook.bean.ServerResult;
-import com.deppon.app.addressbook.bean.ServerResults;
-import com.deppon.app.addressbook.util.ActionBar;
-import com.deppon.app.addressbook.util.ActionBar.AbstractAction;
-import com.deppon.app.addressbook.util.Constant;
-import com.deppon.app.addressbook.util.HttpRequire;
-
-public class EmpQueryActivity extends BaseActivity {
-	private EditText searchText;
-	// private TextView searchBtn;cancelBtn;
-	private ImageView searchEmp, searchOrg;
-	private ImageView searchImage;
-	private ListView list;
-	private boolean isSearchEmp = true;
-	private ServerResults results;
-	private int startIndex = 0;
-	private EmpListAdapter2 empAdapter;
-	private ServerResult result;
-	private OrgListAdapter orgAdapter;
-	private ActionBar head;
+public class EmpQueryActivity extends FragmentActivity implements
+		EmpQueryFragment.OnEmpQueryListener,
+		EmpDetailFragment.EmpDetailListRefreshListener,
+		AddressListFragment.OnAddressListRefreshListener, OnTouchListener,
+		OnGestureListener {
 	private String loginUser, token;
-
-	/**
-	 * 对页面的元素进行处理的回调类.
-	 */
-	public Handler myHandler = new Handler() {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case 1:
-				alert("对不起，出现异常");
-				break;
-			// 显示人员
-			case 3:
-				// 从url返回的数据进行解析，然后加载到列表中.
-				List json = results.getData();
-				list.setDivider(null);
-				if (json != null && json.size() > 0) {
-					List<EmployeeVO> emps = new ArrayList<EmployeeVO>(
-							json.size());
-					for (Object obj : json) {
-						JSONObject _json = (JSONObject) obj;
-						EmployeeVO user = JSON.parseObject(
-								_json.toJSONString(), EmployeeVO.class);
-						emps.add(user);
-					}
-					empAdapter = new EmpListAdapter2(emps,
-							EmpQueryActivity.this, 0, 0);
-					list.setAdapter(empAdapter);
-				} else {
-					List<EmployeeVO> emps = new ArrayList<EmployeeVO>();
-					empAdapter = new EmpListAdapter2(emps,
-							EmpQueryActivity.this, 0, 0);
-					list.setAdapter(empAdapter);
-				}
-
-				break;
-			// 显示组织机构
-			case 2:
-				List json2 = results.getData();
-				list.setDivider(null);
-				if (json2 != null && json2.size() > 0) {
-					List<OrganizationVO> orgs = new ArrayList<OrganizationVO>(
-							json2.size());
-					for (Object obj : json2) {
-						JSONObject _json = (JSONObject) obj;
-						OrganizationVO org = JSON.parseObject(
-								_json.toJSONString(), OrganizationVO.class);
-						orgs.add(org);
-					}
-					orgAdapter = new OrgListAdapter(orgs,
-							EmpQueryActivity.this, 0, 0);
-					list.setAdapter(orgAdapter);
-				} else {
-					List<OrganizationVO> orgs = new ArrayList<OrganizationVO>();
-					orgAdapter = new OrgListAdapter(orgs,
-							EmpQueryActivity.this, 0, 0);
-					list.setAdapter(orgAdapter);
-				}
-				break;
-			// 人员详情
-			case 4:
-				// 从url返回的数据进行解析，然后加载到列表中.
-				JSONObject json3 = result.getData();
-				EmployeeVO t2 = (EmployeeVO) JSON.parseObject(
-						json3.toJSONString(), EmployeeVO.class);
-				Intent intent = new Intent(EmpQueryActivity.this,
-						EmpDetailActivity.class);
-				intent.putExtra("empDetail", t2);
-				startActivity(intent);
-				break;
-			default:
-				super.hasMessages(msg.what);
-				break;
-			}
-		}
-	};
-
-	private void search(String content) {
-		try {
-			results = HttpRequire.search(isSearchEmp, content, startIndex,
-					loginUser, token);
-			// 如果返回数据不是1，就说明出现异常.
-			if (results.getErrorCode() < 0) {
-				myHandler.sendEmptyMessage(1);
-			}
-			// 否则就进行文件解析处理.
-			else {
-				if (isSearchEmp)
-					// 显示人员
-					myHandler.sendEmptyMessage(3);
-				else
-					// 显示组织
-					myHandler.sendEmptyMessage(2);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void setImage(boolean isSearchEmp) {
-		if(isSearchEmp){
-			searchOrg.setBackgroundResource(R.drawable.zuzhi);
-			searchEmp.setBackgroundResource(R.drawable.renyuan); 
-			searchText.setHint(R.string.search_emp_hint);
-		}else{
-			searchOrg.setBackgroundResource(R.drawable.zuzhi2);
-			searchEmp.setBackgroundResource(R.drawable.renyuan2);
-			searchText.setHint(R.string.search_org_hint);
-		}
-	}
+	private LinearLayout all;
+	private GestureDetector detector;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.emp_query);
-		// 用户密码
-		searchText = (EditText) findViewById(R.id.searchText);
-		searchImage = (ImageView) findViewById(R.id.searchImage);
-		searchEmp = (ImageView) findViewById(R.id.searchEmp);
-		searchOrg = (ImageView) findViewById(R.id.searchOrg);
-		// searchBtn = (TextView) findViewById(R.id.searchBtn);
-		// cancelBtn = (Button) findViewById(R.id.cancelBtn);
-		list = (ListView) findViewById(R.id.ListView);
-		// 去掉分割线。。
-		list.setDivider(null);
-		loginUser = getIntent().getStringExtra("loginUser");
+		setContentView(R.layout.emp_query_act);
+
 		token = getIntent().getStringExtra("token");
-		head = (ActionBar) findViewById(R.id.query_head);
-		head.init(R.string.search, true, false, 50);
-		head.setLeftAction(new AbstractAction(R.drawable.logo) {
-			@Override
-			public void performAction(View view) {
+		loginUser = getIntent().getStringExtra("loginUser");
+		all = (LinearLayout) findViewById(R.id.all);
+		detector = new GestureDetector((OnGestureListener) this);
 
-			}
-		});
+		all.setLongClickable(true);
 
-		// cancelBtn.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// searchText.setText("");
-		// }
-		//
-		// });
-		searchOrg.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				isSearchEmp = false;
-				setImage(isSearchEmp);
-			}
-		});
-
-		searchEmp.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				isSearchEmp = true;
-				setImage(isSearchEmp);
+		all.setOnTouchListener(new OnTouchListener() {
+			public boolean onTouch(View v, MotionEvent event) {
+				return detector.onTouchEvent(event);
 			}
 
 		});
-
-		searchImage.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				String text = searchText.getText().toString();
-				if ("".equals(text)) {
-					alert("必须输入查询条件");
-				} else {
-					new MyListLoader(true, text).execute("");
-				}
+		// 初始化页面的时候，加载Grid布局的片段.
+		if (findViewById(R.id.tab_content) != null) {
+			if (savedInstanceState != null) {
+				return;
 			}
-
-		});
-
-		list.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-				// 如果不是最后一个级别的列表，就进行下一级的显示.
-				if (!isSearchEmp) {
-					alert("没有开发.");
-				} else {
-					String id = "" + arg1.findViewById(R.id.empName).getTag();
-					goEmpDetail(id);
-				}
-			}
-
-		});
-	}
-
-	/**
-	 * 人员详情.
-	 */
-	private void goEmpDetail(String r) {
-		if (Constant.debug) {
-			myHandler.sendEmptyMessage(9);
-		} else {
-			try {
-				result = HttpRequire.getEmpDetail(r, loginUser, token);
-				// 如果返回数据不是1，就说明出现异常.
-				if (result.getErrorCode() < 0) {
-					myHandler.sendEmptyMessage(1);
-				}
-				// 否则就进行文件解析处理.
-				else {
-					myHandler.sendEmptyMessage(4);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			Bundle args = new Bundle();
+			args.putString("loginUser", loginUser);
+			args.putString("token", token);
+			EmpQueryFragment firstFragment = new EmpQueryFragment();
+			firstFragment.setArguments(args);
+			getSupportFragmentManager().beginTransaction()
+					.add(R.id.tab_content, firstFragment).commit();
 		}
 	}
+ 
 
 	private static final int DIALOG_KEY = 0;
 	private ProgressDialog dialog;
@@ -277,45 +80,109 @@ public class EmpQueryActivity extends BaseActivity {
 		return null;
 	}
 
-	/**
-	 * 加载订票的列表.
-	 */
-	private class MyListLoader extends AsyncTask<String, String, String> {
-
-		private boolean showDialog;
-		private String content;
-
-		public MyListLoader(boolean showDialog, String content) {
-			this.showDialog = showDialog;
-			this.content = content;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			// 执行过程中显示进度栏.
-			if (showDialog) {
-				showDialog(DIALOG_KEY);
+	@Override
+	public void onShowEmpdetail(int empId) {
+		Bundle args = new Bundle();
+		ServerResult result;
+		try {
+			result = HttpRequire.getEmpDetail(empId + "", loginUser, token);
+			// 如果返回数据不是1，就说明出现异常.
+			if (result.getErrorCode() < 0) {
+				Toast.makeText(getApplicationContext(), "对不起查询人员出现异常....",
+						Toast.LENGTH_SHORT).show();
 			}
-		}
+			// 否则就进行文件解析处理.
+			else {
+				JSONObject json3 = result.getData();
+				args.putString(EmpDetailFragment.EMPINFO, json3.toJSONString());
+				EmpDetailFragment newFragment = new EmpDetailFragment();
+				FragmentTransaction transaction = getSupportFragmentManager()
+						.beginTransaction();
+				transaction.setCustomAnimations(R.anim.slide_left_in,
+						R.anim.slide_left_out);
+				newFragment.setArguments(args);
+				transaction.replace(R.id.tab_content, newFragment);
+				transaction.addToBackStack(null);
 
-		public String doInBackground(String... p) {
-			search(content);
-			return "";
-		}
-
-		@Override
-		public void onPostExecute(String Re) {
-			if (showDialog) {
-				removeDialog(DIALOG_KEY);
+				transaction.commit();
 			}
-		}
-
-		@Override
-		protected void onCancelled() {
-			// 取消进度栏.
-			if (showDialog) {
-				removeDialog(DIALOG_KEY);
-			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void back() {
+		FragmentManager fm = getSupportFragmentManager();
+		fm.popBackStack();
+	}
+
+	@Override
+	public void leftBack(MotionEvent event) {
+		detector.onTouchEvent(event);
+	}
+
+	@Override
+	public void onShowAddressList(int root) {
+		Bundle args = new Bundle();
+		args.putInt(AddressListFragment.ROOT_ID, root);
+		args.putString(AddressListFragment.USERID, loginUser);
+		args.putString(AddressListFragment.TOKEN, token);
+		AddressListFragment newFragment = new AddressListFragment();
+		FragmentTransaction transaction = getSupportFragmentManager()
+				.beginTransaction();
+		transaction.setCustomAnimations(R.anim.slide_left_in,
+				R.anim.slide_left_out);
+
+		newFragment.setArguments(args);
+		transaction.replace(R.id.tab_content, newFragment);
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
+
+	@Override
+	public boolean onDown(MotionEvent arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2,
+			float arg3) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void onLongPress(MotionEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,
+			float arg3) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void onShowPress(MotionEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean onTouch(View arg0, MotionEvent arg1) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

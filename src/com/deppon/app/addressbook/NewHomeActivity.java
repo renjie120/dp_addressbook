@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.deppon.app.addressbook.bean.ServerResult;
-import com.deppon.app.addressbook.util.ActionBar;
 import com.deppon.app.addressbook.util.HttpRequire;
 
 /**
@@ -33,8 +32,7 @@ public class NewHomeActivity extends FragmentActivity implements
 		AddressListFragment.OnAddressListRefreshListener,
 		EmpDetailFragment.EmpDetailListRefreshListener, OnTouchListener,
 		OnGestureListener {
-	private GestureDetector detector;
-	private ActionBar head;
+	private GestureDetector detector; 
 	private String loginUser, token;
 	private static final int DIALOG_KEY = 0;
 	private ProgressDialog dialog;
