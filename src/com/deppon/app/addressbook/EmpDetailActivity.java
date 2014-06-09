@@ -1,19 +1,13 @@
 package com.deppon.app.addressbook;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.deppon.app.addressbook.bean.EmployeeVO;
 
 public class EmpDetailActivity extends BaseActivity {
 	private TextView jobName, empName, empEmail, empPhone, orgName;
-	private Button call;
 	private EmployeeVO empVo;
 
 	@Override
@@ -28,7 +22,6 @@ public class EmpDetailActivity extends BaseActivity {
 		empEmail = (TextView) findViewById(R.id.empEmail);
 		empPhone = (TextView) findViewById(R.id.empPhone);
 		orgName = (TextView) findViewById(R.id.orgName);
-		call = (Button) findViewById(R.id.call);
 
 		jobName.setText(empVo.getJobName());
 		empName.setText(empVo.getEmpName());
@@ -36,15 +29,15 @@ public class EmpDetailActivity extends BaseActivity {
 		empPhone.setText(empVo.getMobileNo());
 		orgName.setText(empVo.getOrgName());
 
-		call.setOnClickListener(new OnClickListener() {
+		// call.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View arg0) {
+		// Uri telUri = Uri.parse("tel:" + empPhone.getText().toString());
+		// startActivity(new Intent(Intent.ACTION_DIAL, telUri));
+		// }
+		//
+		// });
 
-			@Override
-			public void onClick(View arg0) {
-				Uri telUri = Uri.parse("tel:" + empPhone.getText().toString());
-				startActivity(new Intent(Intent.ACTION_DIAL, telUri));
-			}
-
-		});
- 
 	}
 }

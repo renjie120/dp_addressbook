@@ -24,6 +24,13 @@
         <item name="android:layout_height">70dp</item>
     </style>
 
+    <style name="empdetail_line">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_height">30dp</item>
+    </style>
+
     <style name="MyCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/checkbox_pass</item>
         <item name="android:paddingLeft">25.0dip</item>
@@ -61,8 +68,18 @@
     <style name="text_style2">
         <item name="android:layout_width">100dp</item>
         <item name="android:layout_height">30dp</item>
+        <item name="android:layout_marginLeft">5dp</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/black</item>
     </style>
+
+    <style name="detail_style1">
+        <item name="android:layout_height">30dp</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+ 
 
 </resources>

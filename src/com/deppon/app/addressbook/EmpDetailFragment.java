@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -13,13 +14,33 @@ import com.deppon.app.addressbook.util.ActionBar;
 import com.deppon.app.addressbook.util.ActionBar.AbstractAction;
 import com.deppon.app.addressbook.util.BaseFragment;
 
+/**
+ * 人员详情.
+ * 
+ * @author 130126
+ * 
+ */
 public class EmpDetailFragment extends BaseFragment {
 	private EmpDetailListRefreshListener listener;
 	public static final String EMPINFO = "empInfo";
 
+	/**
+	 * 操作页面详情碎片的一些接口.
+	 * 
+	 * @author 130126
+	 * 
+	 */
 	public interface EmpDetailListRefreshListener {
+		/**
+		 * 页面人员的详情
+		 * 
+		 * @param empId
+		 */
 		public void onShowEmpdetail(int empId);
-		
+
+		/**
+		 * 回退到上一个界面.
+		 */
 		public void back();
 	}
 
@@ -28,6 +49,7 @@ public class EmpDetailFragment extends BaseFragment {
 		super.onAttach(activity);
 
 		try {
+			// 进行父亲activity的监听绑定.
 			listener = (EmpDetailListRefreshListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
@@ -56,20 +78,28 @@ public class EmpDetailFragment extends BaseFragment {
 		empEmail = (TextView) findViewById(R.id.empEmail);
 		empPhone = (TextView) findViewById(R.id.empPhone);
 		orgName = (TextView) findViewById(R.id.orgName);
-
+		empPhone2 = (TextView) findViewById(R.id.empPhone2);
+		callImg = (ImageView) findViewById(R.id.callHome);
+		shortmessageImg = (ImageView) findViewById(R.id.messageHome);
+		callHome2 = (ImageView) findViewById(R.id.callHome2);
+		sendEmail = (ImageView) findViewById(R.id.sendEmail);
 		jobName.setText(empVo.getJobName());
 		empName.setText(empVo.getEmpName());
 		empEmail.setText(empVo.getEmail());
 		empPhone.setText(empVo.getMobileNo());
 		orgName.setText(empVo.getOrgName());
+		empPhone2.setText(empVo.getTel());
+		callImg.setTag(empVo.getMobileNo());
+		sendEmail.setTag(empVo.getEmail());
+		callHome2.setTag(empVo.getTel());
+		shortmessageImg.setTag(empVo.getMobileNo());
+		// Uri telUri = Uri.parse("tel:" + empPhone.getText().toString());
+		// startActivity(new Intent(Intent.ACTION_DIAL, telUri));
+		// Uri uri = Uri.parse("smsto:" + empPhone.getText().toString());
+		// Intent it = new Intent(Intent.ACTION_SENDTO, uri);
+		// it.putExtra("sms_body", "");
+		// startActivity(new Intent(Intent.ACTION_DIAL, uri));
 
-//		Uri telUri = Uri.parse("tel:" + empPhone.getText().toString());
-//		startActivity(new Intent(Intent.ACTION_DIAL, telUri));
-//		Uri uri = Uri.parse("smsto:" + empPhone.getText().toString());
-//		Intent it = new Intent(Intent.ACTION_SENDTO, uri);
-//		it.putExtra("sms_body", "");
-//		startActivity(new Intent(Intent.ACTION_DIAL, uri));
-	  
 	}
 
 	@Override
@@ -79,7 +109,7 @@ public class EmpDetailFragment extends BaseFragment {
 		return inflater.inflate(R.layout.emp_detail, container, false);
 	}
 
-	private TextView jobName, empName, empEmail, empPhone, orgName;
+	private TextView jobName, empName, empEmail, empPhone, orgName, empPhone2;
 	private EmployeeVO empVo;
-
+	private ImageView callImg, shortmessageImg, callHome2, sendEmail;
 }

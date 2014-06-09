@@ -2,6 +2,8 @@ package com.deppon.app.addressbook;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -200,22 +202,10 @@ public class NewHomeActivity extends FragmentActivity implements
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
 		// e1 触摸的起始位置，e2 触摸的结束位置，velocityX X轴每一秒移动的像素速度（大概这个意思） velocityY
-		if (e2.getX() - e1.getX() > 50 ) {
+		if (e2.getX() - e1.getX() > 50) {
 			FragmentManager fm = getSupportFragmentManager();
 			fm.popBackStack();
-		}
-		// if (Math.abs(e2.getX() - e1.getX()) > 50) {
-		// Toast.makeText(getApplicationContext(), "向左滑动", Toast.LENGTH_SHORT)
-		// .show();
-		// }
-		// if (Math.abs(e2.getY() - e1.getY()) > 50) {
-		// Toast.makeText(getApplicationContext(), "向上滑动", Toast.LENGTH_SHORT)
-		// .show();
-		// }
-		// if (e2.getY() - e1.getY() > 50) {
-		// Toast.makeText(getApplicationContext(), "向下滑动", Toast.LENGTH_SHORT)
-		// .show();
-		// }
+		} 
 		return false;
 	}
 
@@ -251,4 +241,48 @@ public class NewHomeActivity extends FragmentActivity implements
 	public void leftBack(MotionEvent event) {
 		detector.onTouchEvent(event);
 	}
+
+	/**
+	 * 打电话.
+	 * 
+	 * @param v
+	 */
+	public void call(View v) {
+		String p = (String) v.getTag();
+		System.out.println("接受到的电话号码：" + p);
+		if (p != null && !"".equals(p.trim())) {
+			Intent intent = new Intent(Intent.ACTION_CALL,
+					Uri.parse("tel:" + p));
+			this.startActivity(intent);
+		}
+	}
+
+	/**
+	 * 发送短信.
+	 * 
+	 * @param v
+	 */
+	public void sendMessage(View v) {
+		String p = (String) v.getTag();
+		System.out.println("接受到的电话号码：" + p);
+		if (p != null && !"".equals(p.trim())) {
+			Uri uri = Uri.parse("smsto:" + p);
+			Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+			startActivity(intent);
+		}
+	}
+	
+	/**
+	 * 发送邮件.
+	 * @param v
+	 */
+	public void sendEmail(View v) {
+		String p = (String) v.getTag();
+		System.out.println("接受到的邮件地址：" + p);
+		if (p != null && !"".equals(p.trim())) {
+			Intent data=new Intent(Intent.ACTION_SENDTO);
+			data.setData(Uri.parse("mailto:"+p)); 
+			startActivity(data); 
+		}  
+	} 
 }

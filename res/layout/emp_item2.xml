@@ -51,7 +51,7 @@
     </TextView>
 
     <ImageView
-        android:id="@+id/call"
+        android:id="@+id/callImg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -61,13 +61,13 @@
         android:src="@drawable/img_18" />
 
     <ImageView
-        android:id="@+id/shortmessage"
+        android:id="@+id/shortmessageImg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@id/call"
+        android:layout_toRightOf="@id/callImg"
         android:onClick="sendMessage"
         android:src="@drawable/img_19" />
 

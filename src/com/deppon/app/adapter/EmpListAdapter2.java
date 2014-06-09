@@ -68,9 +68,9 @@ public class EmpListAdapter2 extends BaseAdapter {
 			viewHolder.empPhone = (TextView) convertView
 					.findViewById(R.id.empPhone);
 			viewHolder.call = (ImageView) convertView
-					.findViewById(R.id.call);
+					.findViewById(R.id.callImg);
 			viewHolder.shortmessage = (ImageView) convertView
-					.findViewById(R.id.shortmessage);
+					.findViewById(R.id.shortmessageImg);
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (EmpViewHolder2) convertView.getTag();
