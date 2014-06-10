@@ -32,6 +32,11 @@ import com.deppon.app.addressbook.util.ActionBar.AbstractAction;
 import com.deppon.app.addressbook.util.BaseFragment;
 import com.deppon.app.addressbook.util.HttpRequire;
 
+/**
+ * 人员搜索界面的碎片.
+ * @author 130126
+ *
+ */
 public class EmpQueryFragment extends BaseFragment {
 	private OnEmpQueryListener listener;
 
@@ -63,8 +68,7 @@ public class EmpQueryFragment extends BaseFragment {
 		public void leftBack(MotionEvent event);
 	}
 
-	private EditText searchText;
-	// private TextView searchBtn;cancelBtn;
+	private EditText searchText; 
 	private ImageView searchEmp, searchOrg;
 	private ImageView searchImage;
 	private ListView list;

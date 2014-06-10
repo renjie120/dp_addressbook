@@ -8,18 +8,18 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.deppon.app.addressbook.bean.ServerResult;
+import com.deppon.app.addressbook.util.Constant;
 import com.deppon.app.addressbook.util.HttpRequire;
+import com.deppon.app.addressbook.util.IntentUtil;
+import com.deppon.app.addressbook.util.MyGestureDetector;
 
 /**
  * 首页.
@@ -30,11 +30,37 @@ import com.deppon.app.addressbook.util.HttpRequire;
 public class NewHomeActivity extends FragmentActivity implements
 		HomeGridviewFragement.OnHomeGridViewSelectedListener,
 		AddressListFragment.OnAddressListRefreshListener,
-		EmpDetailFragment.EmpDetailListRefreshListener, OnTouchListener,
-		OnGestureListener {
-	private GestureDetector detector; 
+		EmpDetailFragment.EmpDetailListRefreshListener,
+		WebviewFragment.OnWebViewListener {
+	/**
+	 * 新闻动态的url
+	 */
+	private static String NEWS_URL = Constant.MAPP_HOST
+			+ "/jsp/ios/rollnews/rollnews_list.jsp";
+	/**
+	 * 待办事项的url
+	 */
+	private static String WORKFLOW_URL = Constant.MAPP_HOST
+			+ "/toWorkItemsList";
+	/**
+	 * 公告的url
+	 */
+	private static String NOTICE_URL = Constant.MAPP_HOST
+			+ "/jsp/ios/notice/appoint_rmoval_announcement.jsp";
+	/**
+	 * 手势对象
+	 */
+	private MyGestureDetector detector;
+	// 变量：登陆用户，token
 	private String loginUser, token;
 	private static final int DIALOG_KEY = 0;
+	/**
+	 * fragment的主体布局.
+	 */
+	private LinearLayout all;
+	/**
+	 * 弹出框
+	 */
 	private ProgressDialog dialog;
 
 	@Override
@@ -51,28 +77,19 @@ public class NewHomeActivity extends FragmentActivity implements
 		return null;
 	}
 
-	private LinearLayout all;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+		// 加载布局
 		setContentView(R.layout.new_home);
 		all = (LinearLayout) findViewById(R.id.all);
-		detector = new GestureDetector((OnGestureListener) this);
-
-		all.setLongClickable(true);
-
-		all.setOnTouchListener(new OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				return detector.onTouchEvent(event);
-			}
-
-		});
+		// 设置手势动作.
+		detector = new MyGestureDetector(NewHomeActivity.this, all);
+		detector.setRightFling();
 		token = getIntent().getStringExtra("token");
 		loginUser = getIntent().getStringExtra("loginUser");
-		// 初始化页面的时候，加载Grid布局的片段.
+		// 初始化页面的时候，加载Grid布局的碎片.
 		if (findViewById(R.id.tab_content) != null) {
 			if (savedInstanceState != null) {
 				return;
@@ -88,14 +105,15 @@ public class NewHomeActivity extends FragmentActivity implements
 		switch (index) {
 		// 新闻动态
 		case 0:
+			onShowUrl(NEWS_URL, "新闻动态");
 			break;
 		// 待办事项
 		case 1:
-
+			onShowUrl(WORKFLOW_URL, "待办事项");
 			break;
 		// 公告
 		case 2:
-
+			onShowUrl(NOTICE_URL, "公告");
 			break;
 		// 通讯录
 		case 3:
@@ -128,16 +146,43 @@ public class NewHomeActivity extends FragmentActivity implements
 	 */
 	@Override
 	public void onShowAddressList(int root) {
+		// 传递的变量
 		Bundle args = new Bundle();
 		args.putInt(AddressListFragment.ROOT_ID, root);
 		args.putString(AddressListFragment.USERID, loginUser);
 		args.putString(AddressListFragment.TOKEN, token);
+		// 创建通讯录碎片
 		AddressListFragment newFragment = new AddressListFragment();
 		FragmentTransaction transaction = getSupportFragmentManager()
 				.beginTransaction();
+		// 打开碎片的动画
 		transaction.setCustomAnimations(R.anim.slide_left_in,
 				R.anim.slide_left_out);
+		// 设置传递参数
+		newFragment.setArguments(args);
+		transaction.replace(R.id.tab_content, newFragment);
+		// 添加碎片到堆栈中，回退按钮可以操作.
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
 
+	/**
+	 * 打开web连接.
+	 * 
+	 * @param url
+	 */
+	public void onShowUrl(String url, String title) {
+		Bundle args = new Bundle();
+		args.putString(WebviewFragment.URL, url);
+		args.putString(WebviewFragment.TITLE, title);
+		// web页面的碎片
+		WebviewFragment newFragment = new WebviewFragment();
+		FragmentTransaction transaction = getSupportFragmentManager()
+				.beginTransaction();
+		// 动画
+		transaction.setCustomAnimations(R.anim.slide_left_in,
+				R.anim.slide_left_out);
+		// 设置参数
 		newFragment.setArguments(args);
 		transaction.replace(R.id.tab_content, newFragment);
 		transaction.addToBackStack(null);
@@ -152,6 +197,7 @@ public class NewHomeActivity extends FragmentActivity implements
 		Bundle args = new Bundle();
 		ServerResult result;
 		try {
+			// 请求服务端得到人员详情.
 			result = HttpRequire.getEmpDetail(empId + "", loginUser, token);
 			// 如果返回数据不是1，就说明出现异常.
 			if (result.getErrorCode() < 0) {
@@ -160,21 +206,22 @@ public class NewHomeActivity extends FragmentActivity implements
 			}
 			// 否则就进行文件解析处理.
 			else {
+				// 进行json解析，得到人员的信息数据传递到页面中去.
 				JSONObject json3 = result.getData();
 				args.putString(EmpDetailFragment.EMPINFO, json3.toJSONString());
 				EmpDetailFragment newFragment = new EmpDetailFragment();
 				FragmentTransaction transaction = getSupportFragmentManager()
 						.beginTransaction();
+				// 打开页面设置动画.
 				transaction.setCustomAnimations(R.anim.slide_left_in,
 						R.anim.slide_left_out);
 				newFragment.setArguments(args);
+				// 进行碎片替换
 				transaction.replace(R.id.tab_content, newFragment);
 				transaction.addToBackStack(null);
-
 				transaction.commit();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -186,57 +233,11 @@ public class NewHomeActivity extends FragmentActivity implements
 	public void back() {
 		FragmentManager fm = getSupportFragmentManager();
 		fm.popBackStack();
-		System.out.println("getBackStackEntryCount:::"
-				+ fm.getBackStackEntryCount());
-	}
-
-	@Override
-	public boolean onDown(MotionEvent e) {
-		System.out.println("onDown");
-		return false;
-	}
-
-	@Override
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-			float velocityY) {
-		// e1 触摸的起始位置，e2 触摸的结束位置，velocityX X轴每一秒移动的像素速度（大概这个意思） velocityY
-		if (e2.getX() - e1.getX() > 50) {
-			FragmentManager fm = getSupportFragmentManager();
-			fm.popBackStack();
-		} 
-		return false;
-	}
-
-	@Override
-	public void onLongPress(MotionEvent e) {
-		System.out.println("onLongPress");
-	}
-
-	@Override
-	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-			float distanceY) {
-		System.out.println("onScroll");
-		return false;
-	}
-
-	@Override
-	public void onShowPress(MotionEvent e) {
-		System.out.println("onShowPress");
-	}
-
-	@Override
-	public boolean onSingleTapUp(MotionEvent e) {
-		System.out.println("onSingleTapUp");
-		return false;
-	}
-
-	@Override
-	public boolean onTouch(View arg0, MotionEvent arg1) {
-		return onTouchEvent(arg1);
 	}
 
 	@Override
 	public void leftBack(MotionEvent event) {
+		// 顶部菜单栏的回退操作，进行碎片堆栈的回退.
 		detector.onTouchEvent(event);
 	}
 
@@ -247,12 +248,7 @@ public class NewHomeActivity extends FragmentActivity implements
 	 */
 	public void call(View v) {
 		String p = (String) v.getTag();
-		System.out.println("接受到的电话号码：" + p);
-		if (p != null && !"".equals(p.trim())) {
-			Intent intent = new Intent(Intent.ACTION_CALL,
-					Uri.parse("tel:" + p));
-			this.startActivity(intent);
-		}
+		IntentUtil.call(this, p); 
 	}
 
 	/**
@@ -262,25 +258,16 @@ public class NewHomeActivity extends FragmentActivity implements
 	 */
 	public void sendMessage(View v) {
 		String p = (String) v.getTag();
-		System.out.println("接受到的电话号码：" + p);
-		if (p != null && !"".equals(p.trim())) {
-			Uri uri = Uri.parse("smsto:" + p);
-			Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
-			startActivity(intent);
-		}
+		IntentUtil.sendMessage(this, p);  
 	}
-	
+
 	/**
 	 * 发送邮件.
+	 * 
 	 * @param v
 	 */
 	public void sendEmail(View v) {
 		String p = (String) v.getTag();
-		System.out.println("接受到的邮件地址：" + p);
-		if (p != null && !"".equals(p.trim())) {
-			Intent data=new Intent(Intent.ACTION_SENDTO);
-			data.setData(Uri.parse("mailto:"+p)); 
-			startActivity(data); 
-		}  
-	} 
+		IntentUtil.sendEmail(this, p);   
+	}
 }

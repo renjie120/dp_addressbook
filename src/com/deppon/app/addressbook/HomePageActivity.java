@@ -95,19 +95,15 @@ public class HomePageActivity extends TabActivity {
 		TabHost.TabSpec tabSpec3 = tabHost.newTabSpec(Tab3);
 		tabSpec3.setIndicator(composeLayout("工具", R.drawable.icon3));
 		tabSpec3.setContent(new Intent(HomePageActivity.this,
-				WebviewActivity.class)
-				.putExtra("token", token)
-				.putExtra("loginUser", loginUser)
-				.putExtra(
-						"url",
-						Constant.DPM_HOST+"/jsp/ios/rollnews/rollnews_list.jsp"));
+				AboutActivity.class).putExtra("token", token).putExtra(
+				"loginUser", loginUser));
 		tabHost.addTab(tabSpec3);
 
 		// 设置第四个tab页的对应的intent布局
 		TabHost.TabSpec tabSpec4 = tabHost.newTabSpec(Tab3);
 		tabSpec4.setIndicator(composeLayout("关于", R.drawable.icon3));
 		tabSpec4.setContent(new Intent(HomePageActivity.this,
-				AboutActivity.class).putExtra("token", token) );
+				AboutActivity.class).putExtra("token", token));
 		tabHost.addTab(tabSpec4);
 
 		// 这是对Tab标签本身的设置
@@ -117,7 +113,7 @@ public class HomePageActivity extends TabActivity {
 			tabWidget.getChildAt(i).getLayoutParams().height = height;
 			View v = tabWidget.getChildAt(i);
 			v.setBackgroundColor(getResources().getColor(
-					R.color.homepage_bottom)); 
+					R.color.homepage_bottom));
 		}
 
 		// 设置Tab变换时的监听事件
@@ -185,13 +181,7 @@ public class HomePageActivity extends TabActivity {
 		tv.setSingleLine(true);
 		tv.setText(s);
 		tv.setTextSize(12);
-		tv.setTextColor(Color.WHITE);
-		// LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(
-		// LinearLayout.LayoutParams.FILL_PARENT, 0, 1);
-		// lp2.setMargins(0, AdjustScreenUtil.adjustTabitem((int) screenWidth),
-		// 0,
-		// 0);
-		// tv.setLayoutParams(lp2);
+		tv.setTextColor(Color.WHITE); 
 		layout.addView(tv);
 		return layout;
 	}

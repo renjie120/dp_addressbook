@@ -23,6 +23,9 @@ import com.deppon.app.addressbook.util.BaseFragment;
 public class EmpDetailFragment extends BaseFragment {
 	private EmpDetailListRefreshListener listener;
 	public static final String EMPINFO = "empInfo";
+	private TextView jobName, empName, empEmail, empPhone, orgName, empPhone2;
+	private EmployeeVO empVo;
+	private ImageView callImg, shortmessageImg, callHome2, sendEmail;
 
 	/**
 	 * 操作页面详情碎片的一些接口.
@@ -92,14 +95,16 @@ public class EmpDetailFragment extends BaseFragment {
 		callImg.setTag(empVo.getMobileNo());
 		sendEmail.setTag(empVo.getEmail());
 		callHome2.setTag(empVo.getTel());
-		shortmessageImg.setTag(empVo.getMobileNo());
-		// Uri telUri = Uri.parse("tel:" + empPhone.getText().toString());
-		// startActivity(new Intent(Intent.ACTION_DIAL, telUri));
-		// Uri uri = Uri.parse("smsto:" + empPhone.getText().toString());
-		// Intent it = new Intent(Intent.ACTION_SENDTO, uri);
-		// it.putExtra("sms_body", "");
-		// startActivity(new Intent(Intent.ACTION_DIAL, uri));
+		if (empVo.getTel() == null || "".equals(empVo.getTel().trim())) {
+			callHome2.setVisibility(View.GONE);
+		}
 
+		if (empVo.getMobileNo() == null
+				|| "".equals(empVo.getMobileNo().trim())) {
+			callImg.setVisibility(View.GONE);
+			shortmessageImg.setVisibility(View.GONE);
+		}
+		shortmessageImg.setTag(empVo.getMobileNo());
 	}
 
 	@Override
@@ -108,8 +113,4 @@ public class EmpDetailFragment extends BaseFragment {
 		System.out.println("EmpDetailFragment____onCreateView");
 		return inflater.inflate(R.layout.emp_detail, container, false);
 	}
-
-	private TextView jobName, empName, empEmail, empPhone, orgName, empPhone2;
-	private EmployeeVO empVo;
-	private ImageView callImg, shortmessageImg, callHome2, sendEmail;
 }

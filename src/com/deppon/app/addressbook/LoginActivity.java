@@ -42,7 +42,7 @@ import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
-public class LoginActivity extends BaseActivity  {
+public class LoginActivity extends BaseActivity {
 	private static final String url = Constant.DPM_HOST
 			+ "/dpm/login_login.action";
 	// 登陆超时时间30秒
@@ -61,7 +61,7 @@ public class LoginActivity extends BaseActivity  {
 	private Button buttonLogin;
 	@ViewInject(R.id.all)
 	private LinearLayout all;
-
+	private SharedPreferences mSharedPreferences; 
 	String deviceId = null;
 	// 记住密码
 	@ViewInject(R.id.remember_password)
@@ -87,36 +87,8 @@ public class LoginActivity extends BaseActivity  {
 		} else {
 			go(null);
 		}
-	}
-
-	// /**
-	// * 判断网络是否好用.
-	// *
-	// * @param context
-	// * @return
-	// */
-	// public boolean isNetworkConnected(Context context) {
-	// try {
-	// // 判断网络情况
-	// if (context != null) {
-	// // 链接管理器
-	// ConnectivityManager mConnectivityManager = (ConnectivityManager) context
-	// .getSystemService(Context.CONNECTIVITY_SERVICE);
-	// NetworkInfo mNetworkInfo = mConnectivityManager
-	// .getActiveNetworkInfo();
-	// // 返回网络状态
-	// if (mNetworkInfo != null) {
-	// return mNetworkInfo.isAvailable();
-	// }
-	// }
-	// } catch (Exception e) {
-	// return false;
-	// }
-	// return false;
-	// }
-
-	private SharedPreferences mSharedPreferences;
-
+	} 
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -129,7 +101,6 @@ public class LoginActivity extends BaseActivity  {
 		JPushInterface.onPause(this);
 	}
 
-
 	Intent in = null;
 	// 打开文件
 	Uri openFile = null;
@@ -140,7 +111,7 @@ public class LoginActivity extends BaseActivity  {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.login);
 		ViewUtils.inject(this);
-	
+
 		JPushInterface.init(getApplicationContext());
 		// 手机临时存储变量
 		mSharedPreferences = PreferenceManager
@@ -343,6 +314,11 @@ public class LoginActivity extends BaseActivity  {
 		}
 	};
 
+	/**
+	 * 保持推送信息.
+	 * @param userName
+	 * @param sysCode
+	 */
 	private void saveJpush(String userName, String sysCode) {
 		String jpushId = mSharedPreferences.getString("jpushId", "-1");
 		String jpushName = mSharedPreferences.getString("jpushuser", "-1");
@@ -357,9 +333,7 @@ public class LoginActivity extends BaseActivity  {
 				mSharedPreferences.edit().putString("jpushId", jpushId)
 						.commit();
 				Set<String> s = new HashSet<String>();
-				s.add(sysCode);
-				// 设置系统名称为别名.
-				// JPushInterface.setTags(getApplicationContext(), s, null);
+				s.add(sysCode); 
 				// 设置别名
 				JPushInterface.setAlias(getApplicationContext(), jpushId,
 						mAliasCallback);
@@ -371,6 +345,9 @@ public class LoginActivity extends BaseActivity  {
 		System.out.println("注册登录用户：" + userName + ",,token=" + jpushId);
 	}
 
+	/**
+	 * 以下代码来自推送jpush自带的示例类.
+	 */
 	private final TagAliasCallback mAliasCallback = new TagAliasCallback() {
 
 		@Override
@@ -433,7 +410,5 @@ public class LoginActivity extends BaseActivity  {
 		new AlertDialog.Builder(LoginActivity.this).setTitle("提示")
 				.setMessage(mess).setPositiveButton("确定", null).show();
 	}
-
-	 
 
 }

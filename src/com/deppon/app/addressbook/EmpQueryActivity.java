@@ -1,54 +1,58 @@
 package com.deppon.app.addressbook;
 
-import com.alibaba.fastjson.JSONObject;
-import com.deppon.app.addressbook.bean.ServerResult;
-import com.deppon.app.addressbook.util.HttpRequire;
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.GestureDetector.OnGestureListener;
-import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONObject;
+import com.deppon.app.addressbook.bean.ServerResult;
+import com.deppon.app.addressbook.util.HttpRequire;
+import com.deppon.app.addressbook.util.IntentUtil;
+import com.deppon.app.addressbook.util.MyGestureDetector;
+
+/**
+ * 人员搜索界面.
+ * 
+ * @author 130126
+ * 
+ */
 public class EmpQueryActivity extends FragmentActivity implements
 		EmpQueryFragment.OnEmpQueryListener,
 		EmpDetailFragment.EmpDetailListRefreshListener,
-		AddressListFragment.OnAddressListRefreshListener, OnTouchListener,
-		OnGestureListener {
+		AddressListFragment.OnAddressListRefreshListener {
+	// 登陆人员，token
 	private String loginUser, token;
+	// 碎片主体所在的布局
 	private LinearLayout all;
-	private GestureDetector detector;
+	// 手势对象.
+	// private GestureDetector detector;
 	private static final int DIALOG_KEY = 0;
+	// 弹出框.
 	private ProgressDialog dialog;
+	private MyGestureDetector detector;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		// 设置布局.
 		setContentView(R.layout.emp_query_act);
 
 		token = getIntent().getStringExtra("token");
 		loginUser = getIntent().getStringExtra("loginUser");
 		all = (LinearLayout) findViewById(R.id.all);
-		detector = new GestureDetector((OnGestureListener) this);
+		// 设置手势.
+		detector = new MyGestureDetector(EmpQueryActivity.this, all);
+		detector.setRightFling();
 
-		all.setLongClickable(true);
-
-		all.setOnTouchListener(new OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				return detector.onTouchEvent(event);
-			}
-
-		});
 		// 初始化页面的时候，加载Grid布局的片段.
 		if (findViewById(R.id.tab_content) != null) {
 			if (savedInstanceState != null) {
@@ -104,10 +108,39 @@ public class EmpQueryActivity extends FragmentActivity implements
 
 				transaction.commit();
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) { 
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 打电话.
+	 * 
+	 * @param v
+	 */
+	public void call(View v) {
+		String p = (String) v.getTag();
+		IntentUtil.call(this, p); 
+	}
+
+	/**
+	 * 发送短信.
+	 * 
+	 * @param v
+	 */
+	public void sendMessage(View v) {
+		String p = (String) v.getTag();
+		IntentUtil.sendMessage(this, p);  
+	}
+
+	/**
+	 * 发送邮件.
+	 * 
+	 * @param v
+	 */
+	public void sendEmail(View v) {
+		String p = (String) v.getTag();
+		IntentUtil.sendEmail(this, p);   
 	}
 
 	@Override
@@ -137,50 +170,6 @@ public class EmpQueryActivity extends FragmentActivity implements
 		transaction.replace(R.id.tab_content, newFragment);
 		transaction.addToBackStack(null);
 		transaction.commit();
-	}
-
-	@Override
-	public boolean onDown(MotionEvent arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2,
-			float arg3) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void onLongPress(MotionEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,
-			float arg3) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void onShowPress(MotionEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean onSingleTapUp(MotionEvent arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean onTouch(View arg0, MotionEvent arg1) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 }

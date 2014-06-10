@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -272,26 +271,7 @@ public class AddressListFragment extends BaseFragment {
 						list.setAdapter(adapter3);
 					}
 				}
-				break;
-			// 人员详情
-			case 4:
-				// 从url返回的数据进行解析，然后加载到列表中.
-//				JSONObject json2 = result.getData();
-//				EmployeeVO t2 = (EmployeeVO) JSON.parseObject(
-//						json2.toJSONString(), EmployeeVO.class);
-//				Intent intent = new Intent(
-//						AddressListFragment.this.getActivity(),
-//						EmpDetailActivity.class);
-//				intent.putExtra("empDetail", t2);
-//				startActivity(intent);
-				break;
-			// 人员查询界面
-			case 5:
-				Intent intent2 = new Intent(
-						AddressListFragment.this.getActivity(),
-						EmpQueryActivity.class);
-				startActivity(intent2);
-				break;
+				break;  
 			default:
 				super.hasMessages(msg.what);
 				break;
@@ -385,24 +365,6 @@ public class AddressListFragment extends BaseFragment {
 		public TextView empPhone;
 		public ImageView call;
 		public ImageView shortmessage;
-	}
-
-//	public final static class ViewHolder {
-//		public TextView name;
-//		public TextView parent;
-//	}
-//
-//	public final static class EmpViewHolder {
-//		public TextView empName;
-//		public ImageView people;
-//	}
-
-//	public final static class EmpViewHolder2 {
-//		public TextView jobname;
-//		public TextView empName;
-//		public TextView empPhone;
-//		public ImageView call;
-//		public ImageView shortmessage;
-//	}
+	} 
 
 }

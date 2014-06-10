@@ -109,7 +109,6 @@ public class ActionBar extends LinearLayout implements OnClickListener {
 		}
 
 	}
-	 
 
 	/**
 	 * 刷新按钮的操作.
@@ -125,7 +124,7 @@ public class ActionBar extends LinearLayout implements OnClickListener {
 		@Override
 		public void performAction(final View view) {
 			this.ab.onRefreshClick();
-		} 
+		}
 	}
 
 	private void onRefreshClick() {
@@ -155,11 +154,20 @@ public class ActionBar extends LinearLayout implements OnClickListener {
 	 * @param left
 	 *            是否显示左边图片
 	 * @param right
-	 *            是否显示右边图片 
+	 *            是否显示右边图片
 	 * @param height
-	 *            高度 
+	 *            高度
 	 */
-	public void init(int title, boolean left, boolean right,int height) {
+	public void init(int title, boolean left, boolean right, int height) {
+		setTitle(title);
+		setLeftVisible(left);
+		setRightVisible(right);
+		setWidthHeight(LayoutParams.FILL_PARENT, height);
+		// if (titleSize > 0)
+		// setTitleSize(titleSize);
+	}
+
+	public void init(String title, boolean left, boolean right, int height) {
 		setTitle(title);
 		setLeftVisible(left);
 		setRightVisible(right);
@@ -241,11 +249,12 @@ public class ActionBar extends LinearLayout implements OnClickListener {
 		this.mLeftButton.setImageResource(resId);
 	}
 
-	public void setLeftSize(final int width, final int height,final int marginTop) {
+	public void setLeftSize(final int width, final int height,
+			final int marginTop) {
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width,
 				height);
 		lp.gravity = Gravity.CENTER_VERTICAL;
-		lp.leftMargin = 10; 
+		lp.leftMargin = 10;
 		lp.topMargin = marginTop;
 		mLeftButton.setLayoutParams(lp);
 	}
@@ -269,9 +278,12 @@ public class ActionBar extends LinearLayout implements OnClickListener {
 	public void setRightIcon(final int resId) {
 		this.mRightButton.setImageResource(resId);
 	}
- 
 
 	public void setTitle(final int resId) {
+		this.mTitle.setText(resId);
+	}
+
+	public void setTitle(final String resId) {
 		this.mTitle.setText(resId);
 	}
 
