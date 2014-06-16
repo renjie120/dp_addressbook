@@ -13,7 +13,7 @@ public class Constant {
 	 * 移动OA请求主机.
 	 */ 
 //	public static final String MAPP_HOST = "http://192.168.17.44:8180/dpm";
-	public static final String MAPP_HOST = "http://10.224.70.13:8089/DPMontal";
+	public static final String MAPP_HOST = "http://10.224.70.16:8089/DPMontal";
 	//正式环境
 //	public static final String DPM_HOST = "http://192.168.2.159/dpm";
 	public static final boolean debug = false;

@@ -46,14 +46,25 @@ public class MyGestureDetector implements OnTouchListener, OnGestureListener {
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
 		// e1 触摸的起始位置，e2 触摸的结束位置，velocityX X轴每一秒移动的像素速度（大概这个意思） velocityY
+
 		if (e2.getX() - e1.getX() > 50) {
-			FragmentManager fm = act.getSupportFragmentManager();
-			FragmentTransaction transaction = fm.beginTransaction();
-			// 打开碎片的动画
-			transaction.setCustomAnimations(R.anim.slide_right_out,
-					R.anim.slide_right_in);
-			fm.popBackStack();
-			transaction.commit();
+			float x = Math.abs(e2.getX() - e1.getX());
+			float y = Math.abs(e2.getY() - e1.getY());
+			float xy = 0;
+			if (y != 0)
+				xy = x / y;
+			else
+				xy = 0;
+			//如果是水平滑动，或者是角度小于7.5度，就进行右滑.
+			if (xy == 0 || xy > Math.tan(82.5)) {
+				FragmentManager fm = act.getSupportFragmentManager();
+				FragmentTransaction transaction = fm.beginTransaction();
+				// 打开碎片的动画
+				transaction.setCustomAnimations(R.anim.slide_right_out,
+						R.anim.slide_right_in);
+				fm.popBackStack();
+				transaction.commit();
+			}
 		}
 		return false;
 	}

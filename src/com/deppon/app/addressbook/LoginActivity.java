@@ -27,6 +27,8 @@ import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.deppon.app.addressbook.bean.LoginResult;
 import com.deppon.app.addressbook.bean.Result;
 import com.deppon.app.addressbook.util.Constant;
@@ -267,15 +269,21 @@ public class LoginActivity extends BaseActivity {
 						@Override
 						public void onSuccess(ResponseInfo<String> responseInfo) {
 							removeDialog(DIALOG_KEY);
-							System.out.println("第一次返回结果是：" + responseInfo.result);
+							System.out.println("第一次返回结果是："
+									+ responseInfo.result);
 							Result r = (Result) JSON.parseObject(
 									responseInfo.result, Result.class);
 							if (r.getErrorCode() == 0) {
 								String _res = r.getData().toString();
 								LoginResult result = (LoginResult) JSON
 										.parseObject(_res, LoginResult.class);
-								loginCheck(uid,result.getCasCookie(),result.getSid(),tk);
-								
+								System.out.println("result.getSessionId()=="
+										+ result.getSessionId());
+								System.out.println("result.getSid()=="
+										+ result.getSid());
+								loginCheck(uid, result.getCasCookie(),
+										result.getSessionId(), tk);
+
 							} else {
 								alert(r.getErrorMessage());
 							}
@@ -291,36 +299,61 @@ public class LoginActivity extends BaseActivity {
 		}
 	}
 
-	private void loginCheck(final String userId, String cassSession, String sessionId,final String tk) { 
-		HttpUtils http = new HttpUtils();
+	private void loginCheck(final String userId, String cassSession,
+			String sessionId, final String tk) {
+		final HttpUtils http = new HttpUtils();
 		RequestParams p = new RequestParams();
 		p.addBodyParameter("userid", userId);
 		p.addBodyParameter("sessionId", sessionId);
-		if(cassSession!=null){
+		if (cassSession != null) {
 			cassSession = cassSession.split("=")[1];
 		}
 		p.addBodyParameter("CASTGC", cassSession);
+		System.out.println("请求参数：" + userId);
+		System.out.println("请求参数：sessionId---" + sessionId);
+		System.out.println("请求参数：CASTGC---" + cassSession);
 		http.configResponseTextCharset("GBK");
 		http.configUserAgent("APP-Android");
-		http.send(HttpRequest.HttpMethod.POST, loginUrl, p, new RequestCallBack<String>() {
+		System.out.println("第二次返回结果是：" + sessionId);
+		http.send(HttpRequest.HttpMethod.POST, loginUrl, p,
+				new RequestCallBack<String>() {
 
-			@Override
-			public void onFailure(HttpException arg0, String arg1) {
-				arg0.printStackTrace();
-				System.out.println("第二次请求出现错误："+arg1);
-			}
+					@Override
+					public void onFailure(HttpException arg0, String arg1) {
+						arg0.printStackTrace();
+						System.out.println("第二次请求出现错误：" + arg1);
+					}
 
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo) {
-				System.out.println("第二次返回结果是：" + responseInfo.result);
-				Intent intent2 = new Intent(LoginActivity.this,
-						HomePageActivity.class);
-				intent2.putExtra("loginUser", userId);
-				intent2.putExtra("token", tk);
-				saveJpush(userId, "dpm");
-				startActivity(intent2);
-			} 
-		});
+					@Override
+					public void onSuccess(ResponseInfo<String> responseInfo) {
+						JSONObject m = JSON.parseObject(JSON.toJSONString(http
+								.getHttpClient()));
+						JSONObject cookies = JSON.parseObject(m
+								.get("cookieStore") + "");
+						System.out.println(cookies.get("cookies"));
+						JSONArray cks = JSON.parseArray(cookies.get("cookies")
+								+ "");
+						String sessionid = null;
+						if (cks.size() > 0) {
+							for (Object obj : cks) {
+								String str = obj.toString();
+								JSONObject o = JSON.parseObject(str);
+								if ("JSESSIONID".equals(o.get("name"))) {
+									sessionid = o.getString("value") + "";
+									break;
+								}
+							}
+						}
+						System.out.println(",,计算得到的session===" + sessionid);
+						Intent intent2 = new Intent(LoginActivity.this,
+								HomePageActivity.class);
+						intent2.putExtra("loginUser", userId);
+						intent2.putExtra("sessionId", sessionid);
+						intent2.putExtra("token", tk);
+						saveJpush(userId, "dpm");
+						startActivity(intent2);
+					}
+				});
 	}
 
 	public Handler myHandler = new Handler() {

@@ -1,7 +1,5 @@
 package com.deppon.app.addressbook;
 
-import com.deppon.app.addressbook.util.Constant;
-
 import android.app.TabActivity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -29,7 +27,7 @@ public class HomePageActivity extends TabActivity {
 	private static final String Tab2 = "Tab2";
 	private static final String Tab3 = "Tab3";
 	private static final String Tab4 = "Tab4";
-	private String token, loginUser;
+	private String token, loginUser, sessionId;
 	private float screenHeight = 0;
 	private float screenWidth = 0;
 	public static float barH = 0.1f;
@@ -66,6 +64,7 @@ public class HomePageActivity extends TabActivity {
 		JPushInterface.init(getApplicationContext());
 		Intent intent = getIntent();
 		token = intent.getStringExtra("token");
+		sessionId = intent.getStringExtra("sessionId");
 		loginUser = intent.getStringExtra("loginUser");
 
 		float[] screen2 = getScreen2();
@@ -79,8 +78,9 @@ public class HomePageActivity extends TabActivity {
 		TabHost.TabSpec tabSpec = tabHost.newTabSpec(Tab1);
 		tabSpec.setIndicator(composeLayout("首页", R.drawable.icon1));
 		tabSpec.setContent(new Intent(HomePageActivity.this,
-				NewHomeActivity.class).putExtra("token", token).putExtra(
-				"loginUser", loginUser));
+				NewHomeActivity.class).putExtra("token", token)
+				.putExtra("sessionId", sessionId)
+				.putExtra("loginUser", loginUser));
 		tabHost.addTab(tabSpec);
 
 		// 设置第二个tab页的对应的intent布局
@@ -101,7 +101,7 @@ public class HomePageActivity extends TabActivity {
 
 		// 设置第四个tab页的对应的intent布局
 		TabHost.TabSpec tabSpec4 = tabHost.newTabSpec(Tab3);
-		tabSpec4.setIndicator(composeLayout("关于", R.drawable.icon3));
+		tabSpec4.setIndicator(composeLayout("关于", R.drawable.icon4));
 		tabSpec4.setContent(new Intent(HomePageActivity.this,
 				AboutActivity.class).putExtra("token", token));
 		tabHost.addTab(tabSpec4);
@@ -181,7 +181,7 @@ public class HomePageActivity extends TabActivity {
 		tv.setSingleLine(true);
 		tv.setText(s);
 		tv.setTextSize(12);
-		tv.setTextColor(Color.WHITE); 
+		tv.setTextColor(Color.WHITE);
 		layout.addView(tv);
 		return layout;
 	}

@@ -50,7 +50,7 @@ public class NewHomeActivity extends FragmentActivity implements
 	 */
 	private MyGestureDetector detector;
 	// 变量：登陆用户，token
-	private String loginUser, token;
+	private String loginUser, token, sessionId;
 	private static final int DIALOG_KEY = 0;
 	/**
 	 * fragment的主体布局.
@@ -86,6 +86,7 @@ public class NewHomeActivity extends FragmentActivity implements
 		detector = new MyGestureDetector(NewHomeActivity.this, all);
 		detector.setRightFling();
 		token = getIntent().getStringExtra("token");
+		sessionId = getIntent().getStringExtra("sessionId");
 		loginUser = getIntent().getStringExtra("loginUser");
 		// 初始化页面的时候，加载Grid布局的碎片.
 		if (findViewById(R.id.tab_content) != null) {
@@ -173,6 +174,7 @@ public class NewHomeActivity extends FragmentActivity implements
 		Bundle args = new Bundle();
 		args.putString(WebviewFragment.URL, url);
 		args.putString(WebviewFragment.TITLE, title);
+		args.putString(WebviewFragment.SESSION_ID, sessionId);
 		// web页面的碎片
 		WebviewFragment newFragment = new WebviewFragment();
 		FragmentTransaction transaction = getSupportFragmentManager()
@@ -246,7 +248,7 @@ public class NewHomeActivity extends FragmentActivity implements
 	 */
 	public void call(View v) {
 		String p = (String) v.getTag();
-		IntentUtil.call(this, p); 
+		IntentUtil.call(this, p);
 	}
 
 	/**
@@ -256,7 +258,7 @@ public class NewHomeActivity extends FragmentActivity implements
 	 */
 	public void sendMessage(View v) {
 		String p = (String) v.getTag();
-		IntentUtil.sendMessage(this, p);  
+		IntentUtil.sendMessage(this, p);
 	}
 
 	/**
@@ -266,6 +268,7 @@ public class NewHomeActivity extends FragmentActivity implements
 	 */
 	public void sendEmail(View v) {
 		String p = (String) v.getTag();
-		IntentUtil.sendEmail(this, p);   
+		IntentUtil.sendEmail(this, p);
 	}
+
 }
