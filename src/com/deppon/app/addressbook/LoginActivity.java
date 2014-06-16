@@ -45,6 +45,7 @@ import com.lidroid.xutils.view.annotation.event.OnClick;
 public class LoginActivity extends BaseActivity {
 	private static final String url = Constant.DPM_HOST
 			+ "/dpm/login_login.action";
+	private static final String loginUrl = Constant.MAPP_HOST + "/logincheck";
 	// 登陆超时时间30秒
 	public static final int TIMEOUT = 30;
 
@@ -61,7 +62,7 @@ public class LoginActivity extends BaseActivity {
 	private Button buttonLogin;
 	@ViewInject(R.id.all)
 	private LinearLayout all;
-	private SharedPreferences mSharedPreferences; 
+	private SharedPreferences mSharedPreferences;
 	String deviceId = null;
 	// 记住密码
 	@ViewInject(R.id.remember_password)
@@ -87,8 +88,8 @@ public class LoginActivity extends BaseActivity {
 		} else {
 			go(null);
 		}
-	} 
-	
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -266,19 +267,15 @@ public class LoginActivity extends BaseActivity {
 						@Override
 						public void onSuccess(ResponseInfo<String> responseInfo) {
 							removeDialog(DIALOG_KEY);
-							System.out.println("返回结果是：" + responseInfo.result);
+							System.out.println("第一次返回结果是：" + responseInfo.result);
 							Result r = (Result) JSON.parseObject(
 									responseInfo.result, Result.class);
 							if (r.getErrorCode() == 0) {
 								String _res = r.getData().toString();
 								LoginResult result = (LoginResult) JSON
 										.parseObject(_res, LoginResult.class);
-								Intent intent2 = new Intent(LoginActivity.this,
-										HomePageActivity.class);
-								intent2.putExtra("loginUser", uid);
-								intent2.putExtra("token", tk);
-								saveJpush(uid, "dpm");
-								startActivity(intent2);
+								loginCheck(uid,result.getCasCookie(),result.getSid(),tk);
+								
 							} else {
 								alert(r.getErrorMessage());
 							}
@@ -292,6 +289,38 @@ public class LoginActivity extends BaseActivity {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void loginCheck(final String userId, String cassSession, String sessionId,final String tk) { 
+		HttpUtils http = new HttpUtils();
+		RequestParams p = new RequestParams();
+		p.addBodyParameter("userid", userId);
+		p.addBodyParameter("sessionId", sessionId);
+		if(cassSession!=null){
+			cassSession = cassSession.split("=")[1];
+		}
+		p.addBodyParameter("CASTGC", cassSession);
+		http.configResponseTextCharset("GBK");
+		http.configUserAgent("APP-Android");
+		http.send(HttpRequest.HttpMethod.POST, loginUrl, p, new RequestCallBack<String>() {
+
+			@Override
+			public void onFailure(HttpException arg0, String arg1) {
+				arg0.printStackTrace();
+				System.out.println("第二次请求出现错误："+arg1);
+			}
+
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				System.out.println("第二次返回结果是：" + responseInfo.result);
+				Intent intent2 = new Intent(LoginActivity.this,
+						HomePageActivity.class);
+				intent2.putExtra("loginUser", userId);
+				intent2.putExtra("token", tk);
+				saveJpush(userId, "dpm");
+				startActivity(intent2);
+			} 
+		});
 	}
 
 	public Handler myHandler = new Handler() {
@@ -316,6 +345,7 @@ public class LoginActivity extends BaseActivity {
 
 	/**
 	 * 保持推送信息.
+	 * 
 	 * @param userName
 	 * @param sysCode
 	 */
@@ -333,7 +363,7 @@ public class LoginActivity extends BaseActivity {
 				mSharedPreferences.edit().putString("jpushId", jpushId)
 						.commit();
 				Set<String> s = new HashSet<String>();
-				s.add(sysCode); 
+				s.add(sysCode);
 				// 设置别名
 				JPushInterface.setAlias(getApplicationContext(), jpushId,
 						mAliasCallback);

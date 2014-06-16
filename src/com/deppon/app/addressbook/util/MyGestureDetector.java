@@ -1,7 +1,10 @@
 package com.deppon.app.addressbook.util;
 
+import com.deppon.app.addressbook.R;
+
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -45,7 +48,12 @@ public class MyGestureDetector implements OnTouchListener, OnGestureListener {
 		// e1 触摸的起始位置，e2 触摸的结束位置，velocityX X轴每一秒移动的像素速度（大概这个意思） velocityY
 		if (e2.getX() - e1.getX() > 50) {
 			FragmentManager fm = act.getSupportFragmentManager();
+			FragmentTransaction transaction = fm.beginTransaction();
+			// 打开碎片的动画
+			transaction.setCustomAnimations(R.anim.slide_right_out,
+					R.anim.slide_right_in);
 			fm.popBackStack();
+			transaction.commit();
 		}
 		return false;
 	}

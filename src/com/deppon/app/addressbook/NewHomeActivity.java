@@ -2,8 +2,6 @@ package com.deppon.app.addressbook;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -36,7 +34,7 @@ public class NewHomeActivity extends FragmentActivity implements
 	 * 新闻动态的url
 	 */
 	private static String NEWS_URL = Constant.MAPP_HOST
-			+ "/jsp/ios/rollnews/rollnews_list.jsp";
+			+ "/jsp/rollnews/rollnews_list.jsp";
 	/**
 	 * 待办事项的url
 	 */
